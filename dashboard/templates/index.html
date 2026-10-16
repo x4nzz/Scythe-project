@@ -9,35 +9,65 @@
     <div class="absolute inset-0 -rotate-6 blur-3xl bg-gradient-to-tr from-[#00ffff10] via-[#ff00ff10] to-[#00bfff10] opacity-30 animate-[pulse_6s_ease-in-out_infinite]"></div>
   </div>
 
-  <!-- Enhanced Hero Section -->
+  <!-- Hero Section -->
   <div class="pt-6 pb-4 text-center max-w-4xl mx-auto space-y-8 relative z-10">
+    <!-- Status Badge -->
     <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-white/[0.1] bg-black/50 backdrop-blur-sm text-[12px] mono tracking-wider">
       <span class="w-2 h-2 rounded-full bg-gradient-to-tr from-neon-cyan to-neon-magenta shadow-[0_0_8px_#00ffff]"></span>
       SYSTEM ONLINE // CORE NODE PRIME
     </div>
 
-    <h1 class="text-6xl md:text-8xl font-extrabold tracking-tight text-white leading-[0.9] mb-4 neonglow-text">
+    <!-- Title -->
+    <h1 class="text-6xl md:text-8xl font-extrabold tracking-tight text-white leading-[0.9] mb-6">
       <span class="relative inline-block">
-        <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-30 blur-3xl"></span>
-        <span class="relative z-10">Scyth</span>
+        <span class="relative z-10">scyth is Discord's premier</span>
       </span>
-      <span class="relative inline-block ml-2">
-        <span class="absolute inset-0 bg-gradient-to-tr from-neon-blue to-neon-green -z-1 opacity-30 blur-3xl"></span>
-        <span class="relative z-10">Core</span>
+      <span class="relative inline-block ml-2 gradient-text">
+        defense & audio matrix
       </span>
     </h1>
 
-    <p class="text-zinc-300 text-base max-w-2xl mx-auto leading-relaxed">
-      Autonomous defense protocols • Lossless audio Scyth networks • Dynamic voice architecture • Real-time infrastructure telemetry
+    <!-- Subtitle -->
+    <p class="text-zinc-300 text-base max-w-2xl mx-auto leading-relaxed mb-8">
+      Autonomous threat detection, lossless audio streaming, dynamic voice architecture, and real-time infrastructure telemetry — all in one Discord defense matrix.
     </p>
 
-    <div class="flex flex-wrap justify-center gap-4 pt-6">
-      <a href="{{ invite_url }}" target="_blank" class="neon-btn px-6 py-3 text-base font-semibold tracking-wider rounded-xl transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]">
-        DEPLOY SCYTH CORE
+    <!-- Live Metrics Bar -->
+    <div class="flex justify-center gap-4 mb-8">
+      <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/[0.1] bg-black/50 backdrop-blur-sm text-sm font-medium text-zinc-200 touch-target">
+        <span class="flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+          <span class="mono text-xs">1.2M+</span>
+          <span class="text-[10px] text-zinc-500">USERS</span>
+        </span>
+        <span class="w-px h-4 bg-white/[0.2]"></span>
+        <span class="flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></span>
+          <span class="mono text-xs">45K+</span>
+          <span class="text-[10px] text-zinc-500">SERVERS</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Dual CTA Buttons -->
+    <div class="flex flex-wrap justify-center gap-4 mb-8">
+      <a href="{{ invite_url }}" target="_blank" class="btn-pill btn-primary touch-target">
+        Deploy Scyth
       </a>
-      <a href="/commands" class="neon-btn px-6 py-3 text-base font-semibold tracking-wider rounded-xl border border-white/[0.1] bg-black/50 hover:bg-black/60 transition-all">
-        ACCESS SCYTH VAULT
+      <a href="/commands" class="btn-pill btn-ghost touch-target">
+        Explore Commands >
       </a>
+    </div>
+
+    <!-- Marquee of Community Server Badges -->
+    <div class="marquee relative z-10">
+      <div class="marquee-track">
+        <div class="marquee-item"><img src="/static/images/4CC25FFE-24EE-441F-BDDF-7FA6F7F4756F.jpeg" alt="Community Server" class="w-24 h-10 object-contain" /></div>
+        <div class="marquee-item"><img src="/static/images/9AED1386-98CF-4A20-B530-D79B4A1B16B5.png" alt="Community Server" class="w-24 h-10 object-contain" /></div>
+        <div class="marquee-item"><img src="/static/images/IMG_8217.png" alt="Community Server" class="w-24 h-10 object-contain" /></div>
+        <div class="marquee-item"><img src="/static/images/4CC25FFE-24EE-441F-BDDF-7FA6F7F4756F.jpeg" alt="Community Server" class="w-24 h-10 object-contain" /></div>
+        <div class="marquee-item"><img src="/static/images/9AED1386-98CF-4A20-B530-D79B4A1B16B5.png" alt="Community Server" class="w-24 h-10 object-contain" /></div>
+      </div>
     </div>
   </div>
 

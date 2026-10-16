@@ -34,7 +34,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
       {% for g in guilds %}
-        <div class="elevated-card-enhanced relative z-10">
+        <div class="feature-card relative z-10">
           <div class="absolute inset-0 -z-5 noise-bg"></div>
           <div class="relative z-10 p-6 space-y-4">
             <div class="flex items-center space-x-4">
@@ -60,12 +60,12 @@
 
             {% if g.bot_joined %}
               <a href="/servers/{{ g.id }}"
-                 class="neon-btn w-full mt-4 text-xs font-semibold px-6 py-3 rounded-xl">
+                 class="btn-primary w-full mt-4 text-xs font-semibold px-6 py-3 rounded-xl">
                 CONFIGURE NODE
               </a>
             {% else %}
               <a href="{{ g.invite_link }}" target="_blank"
-                 class="neon-btn w-full mt-4 text-xs font-semibold px-6 py-3 rounded-xl border border-white/[0.1]">
+                 class="btn-ghost w-full mt-4 text-xs font-semibold px-6 py-3 rounded-xl">
                 INITIATE CONNECTION
               </a>
             {% endif %}
@@ -73,7 +73,7 @@
         </div>
       {% else %}
         <div class="col-span-3 text-center py-16">
-          <div class="elevated-card-enhanced relative z-10">
+          <div class="feature-card relative z-10">
             <div class="absolute inset-0 -z-5 noise-bg"></div>
             <div class="relative z-10 p-8 text-center">
               <p class="text-zinc-400">

@@ -33,214 +33,445 @@
 
   <!-- Search and Filter Controls -->
   <div class="mb-6">
-    <input type="text" id="commandSearch" placeholder="Search commands..." class="w-full px-4 py-2 bg-black/50 border border-neon-cyan/20 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan transition-all duration-200">
-  </div>
-  <div class="flex flex-wrap gap-2 mb-6">
-    <button id="filterAll" class="filter-btn active px-4 py-2 bg-black/30 border border-white/[0.1] text-zinc-300 hover:bg-black/50 hover:text-white transition-all duration-200 rounded-lg" data-filter="all">ALL</button>
-    <button id="filterDefense" class="filter-btn px-4 py-2 bg-black/30 border border-white/[0.1] text-zinc-300 hover:bg-black/50 hover:text-white transition-all duration-200 rounded-lg" data-filter="defense">DEFENSE</button>
-    <button id="filterEnforce" class="filter-btn px-4 py-2 bg-black/30 border border-white/[0.1] text-zinc-300 hover:bg-black/50 hover:text-white transition-all duration-200 rounded-lg" data-filter="enforce">ENFORCE</button>
-    <button id="filterUtility" class="filter-btn px-4 py-2 bg-black/30 border border-white/[0.1] text-zinc-300 hover:bg-black/50 hover:text-white transition-all duration-200 rounded-lg" data-filter="utility">UTILITY</button>
-  </div>
-
-  <div class="space-y-6">
-    <div class="elevated-card-enhanced relative z-10" data-category="defense">
-      <div class="absolute inset-0 -z-5 noise-bg"></div>
-      <div class="relative z-10 p-6 space-y-4">
-        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider mb-4">
-          <span class="relative inline-block">
-            <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
-            <span class="relative z-10">// 01 DEFENSE</span>
-          </span>
-          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
-            <span class="w-1.5 h-1.5 rounded-full bg-neon-cyan"></span>
-            <span>ACTIVE</span>
-          </div>
-        </div>
-        <h2 class="text-lg font-bold text-white tracking-wide neonglow-text">
-          SECURITY & ANTI-NUKE PROTOCOLS
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          <div class="neon-input-container">
-            <code>!lock</code> — Locks text channel for @everyone
-          </div>
-          <div class="neon-input-container">
-            <code>!unlock</code> — Restores message permissions
-          </div>
-          <div class="neon-input-container">
-            <code>!nuke</code> — Clones and resets channel chat history
-          </div>
-          <div class="neon-input-container">
-            <code>!autonuke set &lt;min&gt;</code> — Sets auto-wipe interval timer
-          </div>
-          <div class="neon-input-container">
-            <code>!mediaonly</code> — Enforces attachment-only gallery mode
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="elevated-card-enhanced relative z-10" data-category="enforce">
-      <div class="absolute inset-0 -z-5 noise-bg"></div>
-      <div class="relative z-10 p-6 space-y-4">
-        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider mb-4">
-          <span class="relative inline-block">
-            <span class="absolute inset-0 bg-gradient-to-tr from-neon-blue to-neon-green -z-1 opacity-20 blur-sm"></span>
-            <span class="relative z-10">// 02 ENFORCE</span>
-          </span>
-          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
-            <span class="w-1.5 h-1.5 rounded-full bg-neon-blue"></span>
-            <span>STREAMING</span>
-          </div>
-        </div>
-        <h2 class="text-lg font-bold text-white tracking-wide neonglow-text">
-          MODERATION & ENFORCEMENT GRID
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          <div class="neon-input-container">
-            <code>!ban &lt;user&gt; [reason]</code> — Permanent ban
-          </div>
-          <div class="neon-input-container">
-            <code>!hardban &lt;id&gt;</code> — Persistent blacklist with auto-reban
-          </div>
-          <div class="neon-input-container">
-            <code>!jail &lt;user&gt;</code> — Strips roles and locks user into #jail
-          </div>
-          <div class="neon-input-container">
-            <code>!unjail &lt;user&gt;</code> — Restores original roles
-          </div>
-          <div class="neon-input-container">
-            <code>!strip &lt;user&gt;</code> — Stores and removes all roles
-          </div>
-          <div class="neon-input-container">
-            <code>!restore &lt;user&gt;</code> — Restores archived roles
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="elevated-card-enhanced relative z-10" data-category="utility">
-      <div class="absolute inset-0 -z-5 noise-bg"></div>
-      <div class="relative z-10 p-6 space-y-4">
-        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider mb-4">
-          <span class="relative inline-block">
-            <span class="absolute inset-0 bg-gradient-to-tr from-neon-magenta to-neon-purple -z-1 opacity-20 blur-sm"></span>
-            <span class="relative z-10">// 03 UTILITY</span>
-          </span>
-          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
-            <span class="w-1.5 h-1.5 rounded-full bg-neon-magenta"></span>
-            <span>ARCHIVE</span>
-          </div>
-        </div>
-        <h2 class="text-lg font-bold text-white tracking-wide neonglow-text">
-          UTILITIES & INFORMATION CORE
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          <div class="neon-input-container">
-            <code>!snipe</code> / <code>!cs</code> — Views and clears deleted messages
-          </div>
-          <div class="neon-input-container">
-            <code>!editsnipe</code> — Shows original message before edit
-          </div>
-          <div class="neon-input-container">
-            <code>!avatar</code> / <code>!banner</code> — Retrieves profile artwork
-          </div>
-          <div class="neon-input-container">
-            <code>!firstmessage</code> — Jump link to the first channel message
-          </div>
-          <div class="neon-input-container">
-            <code>!afk [reason]</code> — Sets AFK status with auto-reply
-          </div>
-        </div>
-      </div>
+    <div class="search-input" role="search">
+      <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+      <input type="text" id="commandSearch" placeholder="Search commands..." class="w-full px-4 py-2 bg-black/50 border border-neon-cyan/20 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan transition-all duration-200">
     </div>
   </div>
-</div>
+  <div class="overflow-x-auto pb-1 mb-6">
+    <div class="flex flex-nowrap gap-2 min-w-max">
+      <button class="filter-pill active" data-filter="all">All <span class="badge badge-primary">42</span></button>
+      <button class="filter-pill" data-filter="defense">Security <span class="badge badge-primary">42</span></button>
+      <button class="filter-pill" data-filter="enforce">Moderation <span class="badge badge-error">88</span></button>
+      <button class="filter-pill" data-filter="music">Music <span class="badge badge-secondary">24</span></button>
+      <button class="filter-pill" data-filter="utility">Utility <span class="badge badge-success">60</span></button>
+    </div>
+  </div>
 
-<script>
-(function () {
-  'use strict';
+  <!-- Command Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="commandGrid">
+    <!-- Defense / Security & Anti-Nuke -->
+    <article class="command-card" data-category="defense">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!lock</h3>
+          <span class="command-tag">defense</span>
+        </div>
+        <button class="copy-btn" data-copy="!lock" title="Copy command" aria-label="Copy !lock">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Locks text channel for @everyone</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
 
-  var searchInput = document.getElementById('commandSearch');
-  var filterButtons = document.querySelectorAll('.filter-btn');
-  var categorySections = document.querySelectorAll('[data-category]');
+    <article class="command-card" data-category="defense">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!unlock</h3>
+          <span class="command-tag">defense</span>
+        </div>
+        <button class="copy-btn" data-copy="!unlock" title="Copy command" aria-label="Copy !unlock">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Restores message permissions</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
 
-  // Copy code to clipboard on click, with visual feedback
-  function setupCopy() {
-    var containers = document.querySelectorAll('.neon-input-container');
-    containers.forEach(function (container) {
-      var codeEl = container.querySelector('code');
-      if (!codeEl) return;
-      container.style.cursor = 'pointer';
-      container.title = 'Click to copy';
-      container.addEventListener('click', function () {
-        var text = codeEl.textContent.replace(/\s+/g, ' ').trim();
-        if (!navigator.clipboard || !navigator.clipboard.writeText) {
-          // Fallback for non-secure contexts
-          var ta = document.createElement('textarea');
-          ta.value = text;
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand('copy'); } catch (e) {}
-          document.body.removeChild(ta);
-          return;
-        }
-        navigator.clipboard.writeText(text).then(function () {
-          var original = container.style.boxShadow;
-          container.style.boxShadow = '0 0 12px 2px rgba(0, 255, 200, 0.6)';
-          setTimeout(function () { container.style.boxShadow = original; }, 600);
+    <article class="command-card" data-category="defense">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!nuke</h3>
+          <span class="command-tag">defense</span>
+        </div>
+        <button class="copy-btn" data-copy="!nuke" title="Copy command" aria-label="Copy !nuke">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Clones and resets channel chat history</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="defense">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!autonuke set &lt;min&gt;</h3>
+          <span class="command-tag">defense</span>
+        </div>
+        <button class="copy-btn" data-copy="!autonuke set &lt;min&gt;" title="Copy command" aria-label="Copy !autonuke set &lt;min&gt;">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Sets auto-wipe interval timer</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;min&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="defense">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!mediaonly</h3>
+          <span class="command-tag">defense</span>
+        </div>
+        <button class="copy-btn" data-copy="!mediaonly" title="Copy command" aria-label="Copy !mediaonly">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Enforces attachment-only gallery mode</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
+
+    <!-- Enforce / Moderation & Enforcement -->
+    <article class="command-card" data-category="enforce">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!ban &lt;user&gt; [reason]</h3>
+          <span class="command-tag">moderation</span>
+        </div>
+        <button class="copy-btn" data-copy="!ban &lt;user&gt; [reason]" title="Copy command" aria-label="Copy !ban &lt;user&gt; [reason]">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Permanent ban</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;user&gt;</span>
+        <span class="param-pill">[reason]</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="enforce">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!hardban &lt;id&gt;</h3>
+          <span class="command-tag">moderation</span>
+        </div>
+        <button class="copy-btn" data-copy="!hardban &lt;id&gt;" title="Copy command" aria-label="Copy !hardban &lt;id&gt;">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Persistent blacklist with auto-reban</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;id&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="enforce">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!jail &lt;user&gt;</h3>
+          <span class="command-tag">moderation</span>
+        </div>
+        <button class="copy-btn" data-copy="!jail &lt;user&gt;" title="Copy command" aria-label="Copy !jail &lt;user&gt;">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Strips roles and locks user into #jail</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;user&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="enforce">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!unjail &lt;user&gt;</h3>
+          <span class="command-tag">moderation</span>
+        </div>
+        <button class="copy-btn" data-copy="!unjail &lt;user&gt;" title="Copy command" aria-label="Copy !unjail &lt;user&gt;">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Restores original roles</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;user&gt;</span>
+        <span class="badge badge-secondary">Moderator</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="enforce">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!strip &lt;user&gt;</h3>
+          <span class="command-tag">moderation</span>
+        </div>
+        <button class="copy-btn" data-copy="!strip &lt;user&gt;" title="Copy command" aria-label="Copy !strip &lt;user&gt;">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Stores and removes all roles</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;user&gt;</span>
+        <span class="badge badge-error">Administrator</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="enforce">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!restore &lt;user&gt;</h3>
+          <span class="command-tag">moderation</span>
+        </div>
+        <button class="copy-btn" data-copy="!restore &lt;user&gt;" title="Copy command" aria-label="Copy !restore &lt;user&gt;">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Restores archived roles</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;user&gt;</span>
+        <span class="badge badge-secondary">Moderator</span>
+      </div>
+    </article>
+
+    <!-- Utility -->
+    <article class="command-card" data-category="utility">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!snipe / !cs</h3>
+          <span class="command-tag">utility</span>
+        </div>
+        <button class="copy-btn" data-copy="!snipe / !cs" title="Copy command" aria-label="Copy !snipe / !cs">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Views and clears deleted messages</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-success">Member</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="utility">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!editsnipe</h3>
+          <span class="command-tag">utility</span>
+        </div>
+        <button class="copy-btn" data-copy="!editsnipe" title="Copy command" aria-label="Copy !editsnipe">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Shows original message before edit</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-success">Member</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="utility">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!avatar / !banner</h3>
+          <span class="command-tag">utility</span>
+        </div>
+        <button class="copy-btn" data-copy="!avatar / !banner" title="Copy command" aria-label="Copy !avatar / !banner">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Retrieves profile artwork</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-success">Member</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="utility">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!firstmessage</h3>
+          <span class="command-tag">utility</span>
+        </div>
+        <button class="copy-btn" data-copy="!firstmessage" title="Copy command" aria-label="Copy !firstmessage">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Jump link to the first channel message</p>
+      <div class="command-meta">
+        <span class="param-pill">&lt;prefix&gt;</span>
+        <span class="badge badge-success">Member</span>
+      </div>
+    </article>
+
+    <article class="command-card" data-category="utility">
+      <div class="command-header">
+        <div>
+          <h3 class="command-title">!afk [reason]</h3>
+          <span class="command-tag">utility</span>
+        </div>
+        <button class="copy-btn" data-copy="!afk [reason]" title="Copy command" aria-label="Copy !afk [reason]">
+          <svg class="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <rect width="16" height="12" x="2" y="7" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
+            <path d="M8 5H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+      <p class="command-description">Sets AFK status with auto-reply</p>
+      <div class="command-meta">
+        <span class="param-pill">[reason]</span>
+        <span class="badge badge-success">Member</span>
+      </div>
+    </article>
+  </div>
+
+  <p id="noResults" class="text-zinc-500 text-center py-8 hidden">No commands match your search.</p>
+
+  <script>
+  (function () {
+    'use strict';
+
+    var searchInput = document.getElementById('commandSearch');
+    var filterButtons = document.querySelectorAll('.filter-pill');
+    var cards = document.querySelectorAll('#commandGrid .command-card');
+    var noResults = document.getElementById('noResults');
+
+    // Copy command to clipboard with visual feedback
+    function setupCopy() {
+      document.querySelectorAll('.copy-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var text = btn.getAttribute('data-copy');
+          if (!text) return;
+          if (!navigator.clipboard || !navigator.clipboard.writeText) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+            return;
+          }
+          navigator.clipboard.writeText(text).then(function () {
+            var icon = btn.querySelector('.copy-icon');
+            var label = btn.querySelector('.copy-label');
+            btn.classList.add('bg-neon-cyan/20', 'border-neon-cyan');
+            if (label) label.textContent = 'Copied!';
+            btn.setAttribute('aria-label', 'Copied!');
+            setTimeout(function () {
+              btn.classList.remove('bg-neon-cyan/20', 'border-neon-cyan');
+              if (label) label.textContent = 'Copy';
+              btn.setAttribute('aria-label', 'Copy command');
+            }, 700);
+          });
         });
       });
-    });
-  }
+    }
 
-  // Filter by search query
-  function applySearch() {
-    var q = (searchInput ? searchInput.value : '').toLowerCase().trim();
-    categorySections.forEach(function (section) {
-      var items = section.querySelectorAll('.neon-input-container');
+    // Apply search + category filter to cards
+    function applyFilters() {
+      var q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      var active = document.querySelector('.filter-pill.active');
+      var filter = active ? active.getAttribute('data-filter') : 'all';
       var visible = 0;
-      items.forEach(function (item) {
-        var text = item.textContent.toLowerCase();
-        if (!q || text.indexOf(q) !== -1) {
-          item.style.display = '';
-          visible++;
-        } else {
-          item.style.display = 'none';
-        }
+
+      cards.forEach(function (card) {
+        var text = card.textContent.toLowerCase();
+        var cat = card.getAttribute('data-category');
+        var match = (!q || text.indexOf(q) !== -1) && (filter === 'all' || filter === cat);
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
       });
-      // Hide the whole section if no items match
-      section.style.display = visible > 0 ? '' : 'none';
-    });
-  }
 
-  // Filter by category
-  function applyCategory(filter) {
-    filterButtons.forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.filter === filter);
-    });
-    categorySections.forEach(function (section) {
-      var cat = section.dataset.category;
-      if (filter === 'all' || filter === cat) {
-        section.style.display = '';
-      } else {
-        section.style.display = 'none';
+      if (noResults) {
+        noResults.style.display = visible > 0 ? 'none' : '';
       }
-    });
-  }
+    }
 
-  // Wire up
-  if (searchInput) {
-    searchInput.addEventListener('input', applySearch);
-  }
-  filterButtons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      applyCategory(btn.dataset.filter);
+    // Wire up
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilters);
+    }
+    filterButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        filterButtons.forEach(function (b) {
+          b.classList.toggle('active', b === btn);
+        });
+        applyFilters();
+      });
     });
-  });
 
-  setupCopy();
-})();
-</script>
+    setupCopy();
+    applyFilters();
+  })();
+  </script>
 {% endblock %}

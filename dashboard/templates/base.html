@@ -39,8 +39,8 @@
     <div class="w-5 h-5 rounded-full bg-neon-blue/20"></div>
   </div>
 
-  <!-- Minimal Header -->
-  <header class="border-b border-white/[0.08] bg-[#000000]/90 backdrop-blur-xl sticky top-0 z-50">
+  <!-- Glassmorphism Header -->
+  <header class="glass-header">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-8">
         <a href="/" class="flex items-center space-x-3 group">
@@ -69,8 +69,14 @@
       </div>
 
       <div class="flex items-center space-x-4">
+        <!-- Mobile hamburger toggle -->
+        <button class="hamburger md:hidden" id="hamburger" onclick="toggleDrawer()" aria-label="Toggle menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
         {% if user %}
-          <div class="flex items-center space-x-3 relative overflow-hidden">
+          <div class="flex items-center space-x-3 relative overflow-hidden hidden md:flex">
             <div class="absolute inset-0 bg-gradient-to-r from-neon-cyan/10 to-neon-magenta/10 opacity-0 transition-all duration-300 ease-out"></div>
             <div class="relative z-10 flex items-center space-x-3 bg-zinc-950/80 backdrop-blur-sm border border-neon-cyan/20 px-3.5 py-1.5 rounded-full hover:bg-zinc-900/80 transition-all duration-300 ease-out">
               {% if user.avatar %}
@@ -83,7 +89,7 @@
             </div>
           </div>
         {% else %}
-          <a href="/login" class="relative inline-flex items-center px-5 py-2.5 text-sm font-semibold tracking-wider rounded-xl overflow-hidden min-h-[44px]">
+          <a href="/login" class="relative inline-flex items-center px-5 py-2.5 text-sm font-semibold tracking-wider rounded-xl overflow-hidden min-h-[44px] hidden md:flex">
             <div class="absolute inset-0 bg-gradient-to-r from-neon-cyan/0 to-neon-magenta/0 opacity-0 transition-all duration-300 ease-out"></div>
             <span class="relative z-10 inline-flex items-center px-5 py-2.5 bg-white text-black hover:bg-zinc-200 transition-all duration-300 ease-out uppercase mono">
               Authorize
@@ -94,21 +100,57 @@
     </div>
   </header>
 
+  <!-- Mobile Drawer -->
+  <nav class="mobile-drawer" id="mobile-drawer">
+    <div class="drawer-header">
+      <button onclick="toggleDrawer()" class="text-right" aria-label="Close menu">
+        <span class="text-2xl text-primary">&times;</span>
+      </button>
+    </div>
+    <div class="drawer-nav">
+      <a href="/commands" class="drawer-nav-item">Commands</a>
+      <a href="/shards" class="drawer-nav-item">Shard Status</a>
+      <a href="/faq" class="drawer-nav-item">FAQ/Support</a>
+      <a href="/docs" class="drawer-nav-item">Documentation</a>
+      <a href="/login" class="btn-primary btn-pill mt-4 block text-center w-auto">Authorize</a>
+    </div>
+  </nav>
+
   <!-- Page Main Content -->
   <main class="max-w-6xl mx-auto px-6 py-10 w-full flex-grow">
     {% block content %}{% endblock %}
   </main>
 
   <!-- Minimal Footer -->
-  <footer class="border-t border-white/[0.06] py-8 text-center text-[11px] tracking-[0.18em] text-zinc-600 uppercase mono relative">
+  <footer class="border-t border-white/[0.06] py-8 text-center text-[11px] tracking-[0.18em] text-secondary uppercase mono relative">
     <div class="absolute inset-x-0 top-[-4px] -z-10 h-0.5 bg-gradient-to-r from-transparent via-neon-cyan to-transparent animate-[pulse_4s_ease-in_out_infinite]"></div>
     <p>&copy; 2026 SCYTH INFRASTRUCTURE • ALL RIGHTS RESERVED</p>
-    <div class="mt-2 text-xs text-zinc-500">
+    <div class="mt-2 text-xs text-muted">
       <a href="https://github.com/x4nzz/Scythe-project" class="hover:text-neon-cyan transition-colors">GitHub</a> |
       <a href="#" class="hover:text-neon-cyan transition-colors">Docs</a> |
       <a href="#" class="hover:text-neon-cyan transition-colors">Support</a>
     </div>
   </footer>
+
+  <!-- Drawer Toggle Script -->
+  <script>
+    function toggleDrawer() {
+      const drawer = document.getElementById('mobile-drawer');
+      const hamburger = document.getElementById('hamburger');
+      const isOpen = drawer.classList.toggle('open');
+      hamburger.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', isOpen);
+    }
+    // Close drawer when clicking a nav item
+    document.querySelectorAll('.drawer-nav-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var drawer = document.getElementById('mobile-drawer');
+        var hamburger = document.getElementById('hamburger');
+        drawer.classList.remove('open');
+        hamburger.classList.remove('active');
+      });
+    });
+  </script>
 
 </body>
 </html>
