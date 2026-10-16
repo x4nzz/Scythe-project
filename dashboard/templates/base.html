@@ -26,7 +26,18 @@
   <div class="fixed inset-0 pointer-events-none z-[-1]">
     <div class="absolute inset-0 bg-gradient-to-br from-[#000408] via-[#08000d] to-[#000408] opacity-80"></div>
     <div class="absolute inset-0 -rotate-12 blur-3xl bg-gradient-to-tr from-[#00ffff10] via-[#ff00ff10] to-[#00bfff10] opacity-0 animate-[pulse_4s_ease-in-out_infinite]"></div>
-  </body>
+  </div>
+
+  <!-- Floating Decorative Elements -->
+  <div class="floating-element" style="top: 10%; left: 5%;">
+    <div class="w-4 h-4 rounded-full bg-neon-cyan/20"></div>
+  </div>
+  <div class="floating-element" style="top: 80%; right: 10%;">
+    <div class="w-6 h-6 rounded-full bg-neon-magenta/20"></div>
+  </div>
+  <div class="floating-element" style="bottom: 20%; left: 15%;">
+    <div class="w-5 h-5 rounded-full bg-neon-blue/20"></div>
+  </div>
 
   <!-- Minimal Header -->
   <header class="border-b border-white/[0.08] bg-[#030304]/90 backdrop-blur-xl sticky top-0 z-50">
@@ -74,8 +85,14 @@
   </main>
 
   <!-- Minimal Footer -->
-  <footer class="border-t border-white/[0.06] py-8 text-center text-[11px] tracking-[0.18em] text-zinc-600 uppercase mono">
+  <footer class="border-t border-white/[0.06] py-8 text-center text-[11px] tracking-[0.18em] text-zinc-600 uppercase mono relative">
+    <div class="absolute inset-x-0 top-[-4px] -z-10 h-0.5 bg-gradient-to-r from-transparent via-neon-cyan to-transparent animate-[pulse_4s_ease-in_out_infinite]"></div>
     <p>&copy; 2026 SCYTH INFRASTRUCTURE • ALL RIGHTS RESERVED</p>
+    <div class="mt-2 text-xs text-zinc-500">
+      <a href="https://github.com/x4nzz/Scythe-project" class="hover:text-neon-cyan transition-colors">GitHub</a> |
+      <a href="#" class="hover:text-neon-cyan transition-colors">Docs</a> |
+      <a href="#" class="hover:text-neon-cyan transition-colors">Support</a>
+    </div>
   </footer>
 
 </body>
