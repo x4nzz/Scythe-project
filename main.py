@@ -1205,9 +1205,6 @@ async def fetch_clean_album_art(title: str, artist: str) -> Optional[str]:
         pass
     return None
 
-def clean_song_title(title: str) -> str:
-    return re.sub(r'(?i)\s*[\(\[](?:official\s*(?:video|audio|music\s*video)?|lyrics?|lyric\s*video|audio|visualizer)[\)\]]', '', title).strip()
-
 @bot.event
 async def on_wavelink_track_start(payload: wavelink.TrackStartEventPayload):
     player: wavelink.Player = payload.player

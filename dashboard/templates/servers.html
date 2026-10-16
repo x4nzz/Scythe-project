@@ -3,44 +3,82 @@
 {% block title %}Select a Server • Scyth{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-  <div>
-    <h1 class="text-2xl font-bold text-zinc-100">Select a Server</h1>
-    <p class="text-sm text-zinc-400">Choose a server you manage to adjust security modules and settings.</p>
+<div class="space-y-6 relative">
+  <!-- Enhanced Background -->
+  <div class="absolute inset-0 -z-10 pointer-events-none">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-3"></div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {% for g in guilds %}
-      <div class="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between hover:border-zinc-700 transition-all">
-        <div class="flex items-center space-x-4">
-          {% if g.icon %}
-            <img src="https://cdn.discordapp.com/icons/{{ g.id }}/{{ g.icon }}.png" class="w-12 h-12 rounded-xl object-cover" />
-          {% else %}
-            <div class="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-400">
-              {{ g.name[0] }}
+  <div class="relative z-10">
+    <div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight neonglow-text">
+        <span class="relative inline-block">
+          <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
+          <span class="relative z-10">NEURAL</span>
+        </span>
+        <span class="relative inline-block ml-2">
+          <span class="absolute inset-0 bg-gradient-to-tr from-neon-blue to-neon-green -z-1 opacity-20 blur-sm"></span>
+          <span class="relative z-10">NETWORK</span>
+        </span>
+      </h1>
+      <p class="text-zinc-300 text-sm max-w-xl">
+        Select a neural node to configure defense protocols and infrastructure settings
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+      {% for g in guilds %}
+        <div class="elevated-card-enhanced relative z-10">
+          <div class="absolute inset-0 -z-5 noise-bg"></div>
+          <div class="relative z-10 p-6 space-y-4">
+            <div class="flex items-center space-x-4">
+              {% if g.icon %}
+                <div class="relative">
+                  <img src="https://cdn.discordapp.com/icons/{{ g.id }}/{{ g.icon }}.png"
+                       class="w-14 h-14 rounded-xl object-cover drop-shadow-[0_0_8px_rgba(0,255,255,0.3)]" />
+                  <div class="absolute inset-0 -z-10 bg-gradient-to-tr from-neon-cyan to-neon-magenta opacity-10 blur-3xl"></div>
+                </div>
+              {% else %}
+                <div class="relative w-14 h-14 rounded-xl bg-black/50 border border-white/[0.1] flex items-center justify-center">
+                  <span class="font-bold text-[[0.875rem]] text-zinc-100">{{ g.name[0] }}</span>
+                  <div class="absolute inset-0 -z-10 bg-gradient-to-tr from-neon-blue to-neon-green opacity-10 blur-3xl"></div>
+                </div>
+              {% endif %}
+              <div class="space-y-1">
+                <h3 class="font-semibold text-white text-sm truncate max-w-[150px] neonglow-text">
+                  {{ g.name }}
+                </h3>
+                <span class="text-xs text-zinc-400">ID: {{ g.id }}</span>
+              </div>
             </div>
-          {% endif %}
-          <div>
-            <h3 class="font-semibold text-zinc-100 text-sm truncate max-w-[150px]">{{ g.name }}</h3>
-            <span class="text-xs text-zinc-500">ID: {{ g.id }}</span>
+
+            {% if g.bot_joined %}
+              <a href="/servers/{{ g.id }}"
+                 class="neon-btn w-full mt-4 text-xs font-semibold px-4 py-2">
+                CONFIGURE NODE
+              </a>
+            {% else %}
+              <a href="{{ g.invite_link }}" target="_blank"
+                 class="neon-btn w-full mt-4 text-xs font-semibold px-4 py-2 border border-white/[0.1]">
+                INITIATE CONNECTION
+              </a>
+            {% endif %}
           </div>
         </div>
-
-        {% if g.bot_joined %}
-          <a href="/servers/{{ g.id }}" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white transition-colors">
-            Configure
-          </a>
-        {% else %}
-          <a href="{{ g.invite_link }}" target="_blank" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors border border-zinc-700">
-            Invite Bot
-          </a>
-        {% endif %}
-      </div>
-    {% else %}
-      <div class="col-span-3 text-center py-16 text-zinc-500 text-sm">
-        No servers found where you hold Administrator or Manage Server permissions.
-      </div>
-    {% endfor %}
+      {% else %}
+        <div class="col-span-3 text-center py-16">
+          <div class="elevated-card-enhanced relative z-10">
+            <div class="absolute inset-0 -z-5 noise-bg"></div>
+            <div class="relative z-10 p-8 text-center">
+              <p class="text-zinc-400">
+                No neural nodes detected<br/>
+                <span class="text-xs">Require Administrator or Manage Server permissions</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}

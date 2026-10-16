@@ -7,11 +7,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/custom.css">
   <style>
-    body { 
-      font-family: 'Space Grotesk', -apple-system, sans-serif; 
-      background-color: #030304; 
+    body {
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      background-color: #030304;
       color: #e4e4e7;
     }
     .mono { font-family: 'JetBrains Mono', monospace; }
@@ -21,6 +22,11 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-white/20 selection:text-white bg-[#030304] relative overflow-x-hidden">
+  <!-- Neon Glow Background Layer -->
+  <div class="fixed inset-0 pointer-events-none z-[-1]">
+    <div class="absolute inset-0 bg-gradient-to-br from-[#000408] via-[#08000d] to-[#000408] opacity-80"></div>
+    <div class="absolute inset-0 -rotate-12 blur-3xl bg-gradient-to-tr from-[#00ffff10] via-[#ff00ff10] to-[#00bfff10] opacity-0 animate-[pulse_4s_ease-in-out_infinite]"></div>
+  </body>
 
   <!-- Minimal Header -->
   <header class="border-b border-white/[0.08] bg-[#030304]/90 backdrop-blur-xl sticky top-0 z-50">

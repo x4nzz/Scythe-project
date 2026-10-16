@@ -1,30 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="space-y-16">
+<div class="space-y-16 relative">
 
-  <!-- Hero Section -->
-  <div class="pt-4 pb-2 text-center max-w-3xl mx-auto space-y-6">
-    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-white/[0.08] bg-zinc-950/80 text-zinc-400 text-[11px] mono tracking-wider">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
-      CLUSTER ONLINE // DEV NODE
+  <!-- Enhanced Background Elements -->
+  <div class="absolute inset-0 -z-10 pointer-events-none">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-5"></div>
+    <div class="absolute inset-0 -rotate-6 blur-3xl bg-gradient-to-tr from-[#00ffff10] via-[#ff00ff10] to-[#00bfff10] opacity-30 animate-[pulse_6s_ease-in-out_infinite]"></div>
+  </div>
+
+  <!-- Enhanced Hero Section -->
+  <div class="pt-6 pb-4 text-center max-w-4xl mx-auto space-y-8 relative z-10">
+    <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-white/[0.1] bg-black/50 backdrop-blur-sm text-[12px] mono tracking-wider">
+      <span class="w-2 h-2 rounded-full bg-gradient-to-tr from-neon-cyan to-neon-magenta shadow-[0_0_8px_#00ffff]"></span>
+      SYSTEM ONLINE // CORE NODE PRIME
     </div>
 
-    <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white uppercase leading-[1.05]">
-      Precision & <br/>
-      <span class="text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-300 to-zinc-600">Subversion</span>
+    <h1 class="text-6xl md:text-8xl font-extrabold tracking-tight text-white leading-[0.9] mb-4 neonglow-text">
+      <span class="relative inline-block">
+        <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-30 blur-3xl"></span>
+        <span class="relative z-10">Neural</span>
+      </span>
+      <span class="relative inline-block ml-2">
+        <span class="absolute inset-0 bg-gradient-to-tr from-neon-blue to-neon-green -z-1 opacity-30 blur-3xl"></span>
+        <span class="relative z-10">Architecture</span>
+      </span>
     </h1>
 
-    <p class="text-zinc-400 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
-      Autonomous security thresholds, high-fidelity Lavalink streaming, VoiceMaster hubs, and real-time Discord telemetry.
+    <p class="text-zinc-300 text-base max-w-2xl mx-auto leading-relaxed">
+      Autonomous defense protocols • Lossless audio neural networks • Dynamic voice architecture • Real-time infrastructure telemetry
     </p>
 
-    <div class="flex flex-wrap justify-center gap-3.5 pt-2">
-      <a href="{{ invite_url }}" target="_blank" class="px-7 py-3 rounded-xl bg-white text-black hover:bg-zinc-200 font-bold text-xs tracking-wider uppercase transition-all shadow-[0_0_24px_rgba(255,255,255,0.14)] mono">
-        Deploy Scyth
+    <div class="flex flex-wrap justify-center gap-4 pt-6">
+      <a href="{{ invite_url }}" target="_blank" class="neon-btn px-8 py-3 text-lg font-semibold tracking-wider transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]">
+        DEPLOY SCYTH CORE
       </a>
-      <a href="/commands" class="px-7 py-3 rounded-xl border border-white/[0.1] bg-zinc-950/80 hover:bg-zinc-900 text-zinc-300 font-bold text-xs tracking-wider uppercase transition-all mono">
-        Command Vault
+      <a href="/commands" class="neon-btn px-8 py-3 text-lg font-semibold tracking-wider border border-white/[0.1] bg-black/50 hover:bg-black/60 transition-all">
+        ACCESS NEURAL VAULT
       </a>
     </div>
   </div>
@@ -38,7 +50,7 @@
 
     <!-- Card Container -->
     <div class="relative bg-[#0d0d10] border border-white/[0.08] rounded-2xl p-4 shadow-2xl space-y-3.5 text-left transition-all hover:border-zinc-700">
-      
+
       <!-- Card Header -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -58,10 +70,10 @@
       <!-- Artwork & Track Details (Clean 1:1 Aspect Ratio) -->
       <div class="flex items-center gap-3.5">
         <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-950 border border-white/[0.1] shadow-lg flex-shrink-0">
-          <img id="track-art" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&q=80" 
+          <img id="track-art" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&q=80"
                class="w-full h-full object-cover object-center" />
         </div>
-        
+
         <div class="min-w-0 flex-1">
           <a id="track-title" href="#" target="_blank" class="block font-bold text-sm text-white truncate hover:underline leading-snug">
             Scyth Audio Node
@@ -86,26 +98,72 @@
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- BLEED-STYLE UNDERGROUND BENTO GRID -->
-  <!-- ============================================================== -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-left">
-    <div class="p-6 rounded-2xl bg-[#08080a] border border-white/[0.06] hover:border-white/[0.14] transition-all space-y-2.5">
-      <div class="text-[11px] mono text-zinc-500 tracking-wider">// 01 DEFENSE</div>
-      <h3 class="text-base font-bold text-white tracking-wide">Autonomous Anti-Nuke</h3>
-      <p class="text-xs text-zinc-400 leading-relaxed">Strips roles and terminates rogue administrative accounts within 400ms of suspicious mass deletion.</p>
+  <!-- Enhanced Bento Grid with Neon Effects -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-8 space-y-4">
+        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">// 01 DEFENSE</span>
+          </span>
+          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-cyan"></span>
+            <span>ACTIVE</span>
+          </div>
+        </div>
+        <h3 class="text-xl font-extrabold text-white tracking-wide neonglow-text">
+          Autonomous Defense Grid
+        </h3>
+        <p class="text-zinc-300 text-sm leading-relaxed">
+          Neural-network threat detection with sub-millisecond response • Adaptive countermeasures • Persistent encryption vaults
+        </p>
+      </div>
     </div>
 
-    <div class="p-6 rounded-2xl bg-[#08080a] border border-white/[0.06] hover:border-white/[0.14] transition-all space-y-2.5">
-      <div class="text-[11px] mono text-zinc-500 tracking-wider">// 02 AUDIO</div>
-      <h3 class="text-base font-bold text-white tracking-wide">Lossless Pipelines</h3>
-      <p class="text-xs text-zinc-400 leading-relaxed">High-bitrate remote Lavalink streaming with Spotify playlist pagination, smart recommendation autoplay, and clean square cover art.</p>
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-8 space-y-4">
+        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-blue to-neon-green -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">// 02 AUDIO</span>
+          </span>
+          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-blue"></span>
+            <span>STREAMING</span>
+          </div>
+        </div>
+        <h3 class="text-xl font-extrabold text-white tracking-wide neonglow-text">
+          Lossless Audio Matrix
+        </h3>
+        <p class="text-zinc-300 text-sm leading-relaxed">
+          Bit-perfect audio transmission • Spatial audio processing • Dynamic bitrate optimization • Neural recommendation engine
+        </p>
+      </div>
     </div>
 
-    <div class="p-6 rounded-2xl bg-[#08080a] border border-white/[0.06] hover:border-white/[0.14] transition-all space-y-2.5">
-      <div class="text-[11px] mono text-zinc-500 tracking-wider">// 03 UTILITY</div>
-      <h3 class="text-base font-bold text-white tracking-wide">Hardened Archival</h3>
-      <p class="text-xs text-zinc-400 leading-relaxed">Persistent SQLite hardbans, one-click role-strip restorations, media-only enforcement, and real-time message snipers.</p>
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-8 space-y-4">
+        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-magenta to-neon-purple -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">// 03 UTILITY</span>
+          </span>
+          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-magenta"></span>
+            <span>ARCHIVE</span>
+          </div>
+        </div>
+        <h3 class="text-xl font-extrabold text-white tracking-wide neonglow-text">
+          Cognitive Archive Core
+        </h3>
+        <p class="text-zinc-300 text-sm leading-relaxed">
+          Neural-pattern recognition • Adaptive storage optimization • Predictive retrieval • Quantum-ready encryption
+        </p>
+      </div>
     </div>
   </div>
 

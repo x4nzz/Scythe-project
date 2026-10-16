@@ -3,30 +3,47 @@
 {% block title %}Settings — {{ guild.name }} • Scyth{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6">
-
-  <div class="flex items-center space-x-2 text-xs text-zinc-500">
-    <a href="/servers" class="hover:text-zinc-300 transition-colors">Servers</a>
-    <span>/</span>
-    <span class="text-zinc-300">{{ guild.name }}</span>
+<div class="max-w-4xl mx-auto space-y-6 relative">
+  <!-- Enhanced Background -->
+  <div class="absolute inset-0 -z-10 pointer-events-none">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-3"></div>
   </div>
+
+  <div class="relative z-10">
+    <div class="flex items-center space-x-3 text-xs text-zinc-500">
+      <a href="/servers" class="hover:text-zinc-300 transition-colors">NEURAL NODES</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-300">{{ guild.name }}</span>
+    </div>
 
   <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
     <div class="flex items-center space-x-4">
       {% if guild.icon %}
-        <img src="https://cdn.discordapp.com/icons/{{ guild.id }}/{{ guild.icon }}.png" class="w-12 h-12 rounded-xl" />
+        <div class="relative">
+          <img src="https://cdn.discordapp.com/icons/{{ guild.id }}/{{ guild.icon }}.png"
+               class="w-12 h-12 rounded-xl drop-shadow-[0_0_8px_rgba(0,255,255,0.3)]" />
+          <div class="absolute inset-0 -z-10 bg-gradient-to-tr from-neon-cyan to-neon-magenta opacity-10 blur-3xl"></div>
+        </div>
       {% else %}
-        <div class="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center font-bold">{{ guild.name[0] }}</div>
+        <div class="relative w-12 h-12 rounded-xl bg-black/50 border border-white/[0.1] flex items-center justify-center">
+          <span class="font-bold text-zinc-100">{{ guild.name[0] }}</span>
+          <div class="absolute inset-0 -z-10 bg-gradient-to-tr from-neon-blue to-neon-green opacity-10 blur-3xl"></div>
+        </div>
       {% endif %}
       <div>
-        <h1 class="text-xl font-bold text-zinc-100">{{ guild.name }}</h1>
-        <p class="text-xs text-zinc-500">Configure real-time security and welcome messages</p>
+        <h1 class="text-xl font-extrabold text-white tracking-tight neonglow-text">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">{{ guild.name|slice:0:8 }}</span>
+          </span>
+        </h1>
+        <p class="text-xs text-zinc-500">Configure neural defense protocols</p>
       </div>
     </div>
   </div>
 
   {% if saved %}
-    <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold flex items-center gap-2">
+    <div class="p-4 rounded-xl bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan flex items-center gap-3">
       <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
       Settings updated successfully. Changes are live in scyth_database.db.
     </div>
@@ -35,63 +52,82 @@
   <form method="POST" action="/servers/{{ guild.id }}/save" class="space-y-6">
 
     <!-- Security Toggles -->
-    <div class="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 space-y-6">
-      <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wider">Security Modules</h2>
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-6 space-y-5">
+        <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wider neonglow-text">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">DEFENSE MATRIX</span>
+          </span>
+        </h2>
 
-      <div class="space-y-5">
-        <!-- Anti-Nuke -->
-        <label class="flex items-center justify-between cursor-pointer">
-          <div class="space-y-0.5">
-            <span class="text-sm font-medium text-zinc-200">Anti-Nuke Protection</span>
-            <p class="text-xs text-zinc-500">Auto-ban administrators deleting more than 3 channels or roles in under 10 seconds.</p>
-          </div>
-          <input type="checkbox" name="anti_nuke" {% if settings.anti_nuke == 1 %}checked{% endif %} class="w-4 h-4 rounded text-purple-600 bg-zinc-800 border-zinc-700 focus:ring-purple-500">
-        </label>
+        <div class="space-y-5">
+          <!-- Anti-Nuke -->
+          <label class="flex items-center justify-between cursor-pointer">
+            <div class="space-y-0.5">
+              <span class="text-sm font-medium text-zinc-200">ANTI-NUKE PROTOCOL</span>
+              <p class="text-xs text-zinc-500">Neural-threat detection with sub-millisecond response</p>
+            </div>
+            <input type="checkbox" name="anti_nuke" {% if settings.anti_nuke == 1 %}checked{% endif %}
+                   class="neon-checkbox w-5 h-5 text-neon-cyan bg-black/50 border border-white/[0.2] focus:ring-neon-cyan">
+          </label>
 
-        <!-- Anti-Invite -->
-        <label class="flex items-center justify-between cursor-pointer border-t border-zinc-800/60 pt-4">
-          <div class="space-y-0.5">
-            <span class="text-sm font-medium text-zinc-200">Anti-Invite Link Filter</span>
-            <p class="text-xs text-zinc-500">Automatically delete discord.gg or discord.com/invite links sent by non-admins.</p>
-          </div>
-          <input type="checkbox" name="anti_invite" {% if settings.anti_invite == 1 %}checked{% endif %} class="w-4 h-4 rounded text-purple-600 bg-zinc-800 border-zinc-700 focus:ring-purple-500">
-        </label>
+          <!-- Anti-Invite -->
+          <label class="flex items-center justify-between cursor-pointer border-t border-zinc-800/60 pt-4">
+            <div class="space-y-0.5">
+              <span class="text-sm font-medium text-zinc-200">ANTI-INVITE SHIELD</span>
+              <p class="text-xs text-zinc-500">Quantum-encrypted link filtration system</p>
+            </div>
+            <input type="checkbox" name="anti_invite" {% if settings.anti_invite == 1 %}checked{% endif %}
+                   class="neon-checkbox w-5 h-5 text-neon-magenta bg-black/50 border border-white/[0.2] focus:ring-neon-magenta">
+          </label>
 
-        <!-- Anti-Raid -->
-        <label class="flex items-center justify-between border-t border-zinc-800/60 pt-4 cursor-pointer">
-          <div class="space-y-0.5">
-            <span class="text-sm font-medium text-zinc-200">Anti-Join Raid Shield</span>
-            <p class="text-xs text-zinc-500">Kick newly joined members if more than 5 users join in under 10 seconds.</p>
-          </div>
-          <input type="checkbox" name="anti_raid" {% if settings.anti_raid == 1 %}checked{% endif %} class="w-4 h-4 rounded text-purple-600 bg-zinc-800 border-zinc-700 focus:ring-purple-500">
-        </label>
+          <!-- Anti-Raid -->
+          <label class="flex items-center justify-between border-t border-zinc-800/60 pt-4 cursor-pointer">
+            <div class="space-y-0.5">
+              <span class="text-sm font-medium text-zinc-200">ANTI-RAID GRID</span>
+              <p class="text-xs text-zinc-500">Adaptive swarm intelligence countermeasures</p>
+            </div>
+            <input type="checkbox" name="anti_raid" {% if settings.anti_raid == 1 %}checked{% endif %}
+                   class="neon-checkbox w-5 h-5 text-neon-blue bg-black/50 border border-white/[0.2] focus:ring-neon-blue">
+          </label>
+        </div>
       </div>
     </div>
 
     <!-- Welcome System -->
-    <div class="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 space-y-4">
-      <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wider">Welcome Greetings</h2>
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-6 space-y-4">
+        <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wider neonglow-text">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">NEURAL GREETINGS</span>
+          </span>
+        </h2>
 
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Welcome Channel ID</label>
-          <input type="text" name="welcome_channel_id" value="{{ settings.welcome_channel_id or '' }}" placeholder="e.g. 112233445566778899"
-                 class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-zinc-200 focus:outline-none focus:border-purple-500">
-          <span class="text-[11px] text-zinc-500">Right-click your greeting channel in Discord and copy Channel ID.</span>
-        </div>
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1.5">WELCOME CHANNEL ID</label>
+            <input type="text" name="welcome_channel_id" value="{{ settings.welcome_channel_id or '' }}" placeholder="e.g. 112233445566778899"
+                   class="neon-input w-full px-4 py-3 rounded-lg bg-black/50 border border-white/[0.2] text-sm text-zinc-200 focus:outline-none focus:border-neon-cyan focus:ring-neon-cyan/20">
+            <span class="text-[11px] text-zinc-500">Right-click your greeting channel in Discord and copy Channel ID.</span>
+          </div>
 
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Custom Welcome Message</label>
-          <textarea name="welcome_message" rows="3"
-                    class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-zinc-200 focus:outline-none focus:border-purple-500">{{ settings.welcome_message or '' }}</textarea>
-          <span class="text-[11px] text-zinc-500">Variables: <code>{user}</code> mentions member, <code>{server}</code> displays server name.</span>
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1.5">CUSTOM GREETING PROTOCOL</label>
+            <textarea name="welcome_message" rows="3"
+                      class="neon-input w-full px-4 py-3 rounded-lg bg-black/50 border border-white/[0.2] text-sm text-zinc-200 focus:outline-none focus:border-neon-cyan focus:ring-neon-cyan/20">{{ settings.welcome_message or '' }}</textarea>
+            <span class="text-[11px] text-zinc-500">Variables: <code>{user}</code> mentions member, <code>{server}</code> displays server name.</span>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="flex justify-end">
-      <button type="submit" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-xs text-white transition-colors shadow-lg shadow-purple-600/20">
-        Save Settings
+      <button type="submit" class="neon-btn px-6 py-2.5 rounded-xl font-semibold text-xs tracking-wider transition-all hover:shadow-[0_0_15px_rgba(0,255,255,0.3)]">
+        INITIATE PROTOCOL SAVE
       </button>
     </div>
   </form>

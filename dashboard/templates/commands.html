@@ -3,44 +3,137 @@
 {% block title %}Commands • Scyth{% endblock %}
 
 {% block content %}
-<div class="space-y-8 max-w-5xl mx-auto">
-  <div>
-    <h1 class="text-3xl font-extrabold text-zinc-100">Command Directory</h1>
-    <p class="text-sm text-zinc-400">Complete listing of moderation, voice, security, and utility features.</p>
+<div class="space-y-8 max-w-5xl mx-auto relative">
+  <!-- Enhanced Background -->
+  <div class="absolute inset-0 -z-10 pointer-events-none">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-3"></div>
+  </div>
+
+  <div class="relative z-10">
+    <h1 class="text-3xl font-extrabold text-white tracking-tight neonglow-text">
+      <span class="relative inline-block">
+        <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
+        <span class="relative z-10">NEURAL</span>
+      </span>
+      <span class="relative inline-block ml-2">
+        <span class="absolute inset-0 bg-gradient-to-tr from-neon-blue to-neon-green -z-1 opacity-20 blur-sm"></span>
+        <span class="relative z-10">COMMAND VAULT</span>
+      </span>
+    </h1>
+    <p class="text-zinc-300 text-sm max-w-xl">
+      Access all defense protocols, neural audio systems, and infrastructure utilities
+    </p>
   </div>
 
   <div class="space-y-6">
-    <div class="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 p-6 space-y-4">
-      <h2 class="text-lg font-bold text-purple-400">🛡️ Security & Anti-Nuke</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!lock</code> — Locks text channel for @everyone</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!unlock</code> — Restores message permissions</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!nuke</code> — Clones and resets channel chat history</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!autonuke set &lt;min&gt;</code> — Sets auto-wipe interval timer</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!mediaonly</code> — Enforces attachment-only gallery mode</div>
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-6 space-y-4">
+        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider mb-4">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-cyan to-neon-magenta -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">// 01 DEFENSE</span>
+          </span>
+          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-cyan"></span>
+            <span>ACTIVE</span>
+          </div>
+        </div>
+        <h2 class="text-lg font-bold text-white tracking-wide neonglow-text">
+          SECURITY & ANTI-NUKE PROTOCOLS
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="neon-input-container">
+            <code>!lock</code> — Locks text channel for @everyone
+          </div>
+          <div class="neon-input-container">
+            <code>!unlock</code> — Restores message permissions
+          </div>
+          <div class="neon-input-container">
+            <code>!nuke</code> — Clones and resets channel chat history
+          </div>
+          <div class="neon-input-container">
+            <code>!autonuke set &lt;min&gt;</code> — Sets auto-wipe interval timer
+          </div>
+          <div class="neon-input-container">
+            <code>!mediaonly</code> — Enforces attachment-only gallery mode
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 p-6 space-y-4">
-      <h2 class="text-lg font-bold text-indigo-400">🔨 Moderation & Enforcement</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!ban &lt;user&gt; [reason]</code> — Permanent ban</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!hardban &lt;id&gt;</code> — Persistent blacklist with auto-reban</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!jail &lt;user&gt;</code> — Strips roles and locks user into #jail</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!unjail &lt;user&gt;</code> — Restores original roles</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!strip &lt;user&gt;</code> — Stores and removes all roles</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!restore &lt;user&gt;</code> — Restores archived roles</div>
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-6 space-y-4">
+        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider mb-4">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-blue to-neon-green -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">// 02 ENFORCE</span>
+          </span>
+          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-blue"></span>
+            <span>STREAMING</span>
+          </div>
+        </div>
+        <h2 class="text-lg font-bold text-white tracking-wide neonglow-text">
+          MODERATION & ENFORCEMENT GRID
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="neon-input-container">
+            <code>!ban &lt;user&gt; [reason]</code> — Permanent ban
+          </div>
+          <div class="neon-input-container">
+            <code>!hardban &lt;id&gt;</code> — Persistent blacklist with auto-reban
+          </div>
+          <div class="neon-input-container">
+            <code>!jail &lt;user&gt;</code> — Strips roles and locks user into #jail
+          </div>
+          <div class="neon-input-container">
+            <code>!unjail &lt;user&gt;</code> — Restores original roles
+          </div>
+          <div class="neon-input-container">
+            <code>!strip &lt;user&gt;</code> — Stores and removes all roles
+          </div>
+          <div class="neon-input-container">
+            <code>!restore &lt;user&gt;</code> — Restores archived roles
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 p-6 space-y-4">
-      <h2 class="text-lg font-bold text-emerald-400">⚙️ Utilities & Info</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!snipe</code> / <code>!cs</code> — Views and clears deleted messages</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!editsnipe</code> — Shows original message before edit</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!avatar</code> / <code>!banner</code> — Retrieves profile artwork</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!firstmessage</code> — Jump link to the first channel message</div>
-        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!afk [reason]</code> — Sets AFK status with auto-reply</div>
+    <div class="elevated-card-enhanced relative z-10">
+      <div class="absolute inset-0 -z-5 noise-bg"></div>
+      <div class="relative z-10 p-6 space-y-4">
+        <div class="flex items-center gap-3 text-[11px] mono text-zinc-500 tracking-wider mb-4">
+          <span class="relative inline-block">
+            <span class="absolute inset-0 bg-gradient-to-tr from-neon-magenta to-neon-purple -z-1 opacity-20 blur-sm"></span>
+            <span class="relative z-10">// 03 UTILITY</span>
+          </span>
+          <div class="pulsing-border inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/30 border border-white/[0.1]">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-magenta"></span>
+            <span>ARCHIVE</span>
+          </div>
+        </div>
+        <h2 class="text-lg font-bold text-white tracking-wide neonglow-text">
+          UTILITIES & INFORMATION CORE
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="neon-input-container">
+            <code>!snipe</code> / <code>!cs</code> — Views and clears deleted messages
+          </div>
+          <div class="neon-input-container">
+            <code>!editsnipe</code> — Shows original message before edit
+          </div>
+          <div class="neon-input-container">
+            <code>!avatar</code> / <code>!banner</code> — Retrieves profile artwork
+          </div>
+          <div class="neon-input-container">
+            <code>!firstmessage</code> — Jump link to the first channel message
+          </div>
+          <div class="neon-input-container">
+            <code>!afk [reason]</code> — Sets AFK status with auto-reply
+          </div>
+        </div>
       </div>
     </div>
   </div>

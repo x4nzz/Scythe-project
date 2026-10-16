@@ -1,10 +1,8 @@
-discord.py[voice]
-google-genai
-python-dotenv
+discord.py[voice]>=2.4.0
+python-dotenv>=1.0.1
 yt-dlp
-ffmpeg
 PyNaCl
-wavelink
+wavelink>=3.4.0
 fastapi>=0.110.0
 uvicorn>=0.28.0
 httpx>=0.27.0
