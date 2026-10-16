@@ -12,7 +12,7 @@
   <style>
     body {
       font-family: 'Space Grotesk', -apple-system, sans-serif;
-      background-color: #030304;
+      background-color: #000000;
       color: #e4e4e7;
     }
     .mono { font-family: 'JetBrains Mono', monospace; }
@@ -21,7 +21,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-white/20 selection:text-white bg-[#030304] relative overflow-x-hidden">
+<body class="min-h-screen flex flex-col justify-between selection:bg-white/20 selection:text-white bg-[#000000] relative overflow-x-hidden">
   <!-- Neon Glow Background Layer -->
   <div class="fixed inset-0 pointer-events-none z-[-1]">
     <div class="absolute inset-0 bg-gradient-to-br from-[#000408] via-[#08000d] to-[#000408] opacity-80"></div>
@@ -40,7 +40,7 @@
   </div>
 
   <!-- Minimal Header -->
-  <header class="border-b border-white/[0.08] bg-[#030304]/90 backdrop-blur-xl sticky top-0 z-50">
+  <header class="border-b border-white/[0.08] bg-[#000000]/90 backdrop-blur-xl sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-8">
         <a href="/" class="flex items-center space-x-3 group">
@@ -51,28 +51,43 @@
         </a>
 
         <nav class="hidden md:flex items-center space-x-7 text-[11px] font-medium tracking-[0.16em] text-zinc-400 uppercase mono">
-          <a href="/" class="hover:text-white transition-colors">Overview</a>
-          <a href="/commands" class="hover:text-white transition-colors">Commands</a>
+          <a href="/" class="relative inline-block px-2 py-1 overflow-hidden transition-all duration-300 ease-out">
+            <span class="relative z-10">Overview</span>
+            <span class="absolute inset-0 bg-gradient-to-r from-neon-cyan/0 to-neon-cyan/20 -z-0 transition-all duration-300 ease-out"></span>
+          </a>
+          <a href="/commands" class="relative inline-block px-2 py-1 overflow-hidden transition-all duration-300 ease-out">
+            <span class="relative z-10">Commands</span>
+            <span class="absolute inset-0 bg-gradient-to-r from-neon-cyan/0 to-neon-cyan/20 -z-0 transition-all duration-300 ease-out"></span>
+          </a>
           {% if user %}
-          <a href="/servers" class="hover:text-white transition-colors">Servers</a>
+          <a href="/servers" class="relative inline-block px-2 py-1 overflow-hidden transition-all duration-300 ease-out">
+            <span class="relative z-10">Servers</span>
+            <span class="absolute inset-0 bg-gradient-to-r from-neon-cyan/0 to-neon-cyan/20 -z-0 transition-all duration-300 ease-out"></span>
+          </a>
           {% endif %}
         </nav>
       </div>
 
       <div class="flex items-center space-x-4">
         {% if user %}
-          <div class="flex items-center space-x-3 bg-zinc-950 border border-white/[0.1] px-3.5 py-1.5 rounded-full">
-            {% if user.avatar %}
-              <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png" class="w-5 h-5 rounded-full" />
-            {% else %}
-              <img src="/static/images/4CC25FFE-24EE-441F-BDDF-7FA6F7F4756F.jpeg" alt="Scyth Bot Logo" class="w-5 h-5 rounded-full object-cover" />
-            {% endif %}
-            <span class="text-xs font-medium text-zinc-200 mono">{{ user.username }}</span>
-            <a href="/logout" class="text-[11px] text-zinc-500 hover:text-red-400 transition-colors pl-1">Exit</a>
+          <div class="flex items-center space-x-3 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-neon-cyan/10 to-neon-magenta/10 opacity-0 transition-all duration-300 ease-out"></div>
+            <div class="relative z-10 flex items-center space-x-3 bg-zinc-950/80 backdrop-blur-sm border border-neon-cyan/20 px-3.5 py-1.5 rounded-full hover:bg-zinc-900/80 transition-all duration-300 ease-out">
+              {% if user.avatar %}
+                <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png" class="w-5 h-5 rounded-full transition-transform duration-300 hover:scale-105" />
+              {% else %}
+                <img src="/static/images/4CC25FFE-24EE-441F-BDDF-7FA6F7F4756F.jpeg" alt="Scyth Bot Logo" class="w-5 h-5 rounded-full object-cover" />
+              {% endif %}
+              <span class="text-xs font-medium text-zinc-200 mono">{{ user.username }}</span>
+              <a href="/logout" class="text-[11px] text-zinc-500 hover:text-red-400 transition-colors pl-1 transition-transform duration-200 hover:-translate-y-0.5">Exit</a>
+            </div>
           </div>
         {% else %}
-          <a href="/login" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-wider rounded-lg bg-white text-black hover:bg-zinc-200 transition-all uppercase mono">
-            Authorize
+          <a href="/login" class="relative inline-flex items-center px-4 py-2 text-xs font-semibold tracking-wider rounded-lg overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-neon-cyan/0 to-neon-magenta/0 opacity-0 transition-all duration-300 ease-out"></div>
+            <span class="relative z-10 inline-flex items-center px-4 py-2 bg-white text-black hover:bg-zinc-200 transition-all duration-300 ease-out uppercase mono">
+              Authorize
+            </span>
           </a>
         {% endif %}
       </div>
