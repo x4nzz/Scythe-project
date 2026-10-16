@@ -33,11 +33,8 @@
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-8">
         <a href="/" class="flex items-center space-x-3 group">
-          <!-- Exact Scyth Logo Silhouette (Vector matching Image 4) -->
           <div class="w-8 h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-            <svg viewBox="0 0 200 200" class="w-7 h-7 fill-white scyth-shadow">
-              <path d="M 35 60 C 55 30, 115 25, 165 45 C 172 48, 168 54, 160 55 C 135 59, 145 68, 135 72 C 100 52, 60 62, 45 92 C 32 118, 52 155, 68 175 C 70 178, 66 181, 62 178 C 45 158, 20 115, 35 60 Z"/>
-            </svg>
+            <img src="/static/images/4CC25FFE-24EE-441F-BDDF-7FA6F7F4756F.jpeg" alt="Scyth Bot Logo" class="w-8 h-8 rounded-xl" />
           </div>
           <span class="font-bold text-base tracking-[0.22em] text-white uppercase">SCYTH</span>
         </a>
@@ -57,7 +54,7 @@
             {% if user.avatar %}
               <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png" class="w-5 h-5 rounded-full" />
             {% else %}
-              <div class="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] font-bold">{{ user.username[0]|upper }}</div>
+              <img src="/static/images/4CC25FFE-24EE-441F-BDDF-7FA6F7F4756F.jpeg" alt="Scyth Bot Logo" class="w-5 h-5 rounded-full object-cover" />
             {% endif %}
             <span class="text-xs font-medium text-zinc-200 mono">{{ user.username }}</span>
             <a href="/logout" class="text-[11px] text-zinc-500 hover:text-red-400 transition-colors pl-1">Exit</a>
