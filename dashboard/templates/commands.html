@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Commands • Scyth{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-5xl mx-auto">
+  <div>
+    <h1 class="text-3xl font-extrabold text-zinc-100">Command Directory</h1>
+    <p class="text-sm text-zinc-400">Complete listing of moderation, voice, security, and utility features.</p>
+  </div>
+
+  <div class="space-y-6">
+    <div class="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 p-6 space-y-4">
+      <h2 class="text-lg font-bold text-purple-400">🛡️ Security & Anti-Nuke</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!lock</code> — Locks text channel for @everyone</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!unlock</code> — Restores message permissions</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!nuke</code> — Clones and resets channel chat history</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!autonuke set &lt;min&gt;</code> — Sets auto-wipe interval timer</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!mediaonly</code> — Enforces attachment-only gallery mode</div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 p-6 space-y-4">
+      <h2 class="text-lg font-bold text-indigo-400">🔨 Moderation & Enforcement</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!ban &lt;user&gt; [reason]</code> — Permanent ban</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!hardban &lt;id&gt;</code> — Persistent blacklist with auto-reban</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!jail &lt;user&gt;</code> — Strips roles and locks user into #jail</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!unjail &lt;user&gt;</code> — Restores original roles</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!strip &lt;user&gt;</code> — Stores and removes all roles</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!restore &lt;user&gt;</code> — Restores archived roles</div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 p-6 space-y-4">
+      <h2 class="text-lg font-bold text-emerald-400">⚙️ Utilities & Info</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!snipe</code> / <code>!cs</code> — Views and clears deleted messages</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!editsnipe</code> — Shows original message before edit</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!avatar</code> / <code>!banner</code> — Retrieves profile artwork</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!firstmessage</code> — Jump link to the first channel message</div>
+        <div class="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/50"><code>!afk [reason]</code> — Sets AFK status with auto-reply</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

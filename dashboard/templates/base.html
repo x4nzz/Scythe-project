@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}scyth • autonomous infrastructure{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Space Grotesk', -apple-system, sans-serif; 
+      background-color: #030304; 
+      color: #e4e4e7;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .scyth-shadow {
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.3));
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-white/20 selection:text-white bg-[#030304] relative overflow-x-hidden">
+
+  <!-- Minimal Header -->
+  <header class="border-b border-white/[0.08] bg-[#030304]/90 backdrop-blur-xl sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-8">
+        <a href="/" class="flex items-center space-x-3 group">
+          <!-- Exact Scyth Logo Silhouette (Vector matching Image 4) -->
+          <div class="w-8 h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+            <svg viewBox="0 0 200 200" class="w-7 h-7 fill-white scyth-shadow">
+              <path d="M 35 60 C 55 30, 115 25, 165 45 C 172 48, 168 54, 160 55 C 135 59, 145 68, 135 72 C 100 52, 60 62, 45 92 C 32 118, 52 155, 68 175 C 70 178, 66 181, 62 178 C 45 158, 20 115, 35 60 Z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-base tracking-[0.22em] text-white uppercase">SCYTH</span>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-7 text-[11px] font-medium tracking-[0.16em] text-zinc-400 uppercase mono">
+          <a href="/" class="hover:text-white transition-colors">Overview</a>
+          <a href="/commands" class="hover:text-white transition-colors">Commands</a>
+          {% if user %}
+          <a href="/servers" class="hover:text-white transition-colors">Servers</a>
+          {% endif %}
+        </nav>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        {% if user %}
+          <div class="flex items-center space-x-3 bg-zinc-950 border border-white/[0.1] px-3.5 py-1.5 rounded-full">
+            {% if user.avatar %}
+              <img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png" class="w-5 h-5 rounded-full" />
+            {% else %}
+              <div class="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] font-bold">{{ user.username[0]|upper }}</div>
+            {% endif %}
+            <span class="text-xs font-medium text-zinc-200 mono">{{ user.username }}</span>
+            <a href="/logout" class="text-[11px] text-zinc-500 hover:text-red-400 transition-colors pl-1">Exit</a>
+          </div>
+        {% else %}
+          <a href="/login" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-wider rounded-lg bg-white text-black hover:bg-zinc-200 transition-all uppercase mono">
+            Authorize
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Main Content -->
+  <main class="max-w-6xl mx-auto px-6 py-10 w-full flex-grow">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Minimal Footer -->
+  <footer class="border-t border-white/[0.06] py-8 text-center text-[11px] tracking-[0.18em] text-zinc-600 uppercase mono">
+    <p>&copy; 2026 SCYTH INFRASTRUCTURE • ALL RIGHTS RESERVED</p>
+  </footer>
+
+</body>
+</html>

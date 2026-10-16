@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Settings — {{ guild.name }} • Scyth{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <div class="flex items-center space-x-2 text-xs text-zinc-500">
+    <a href="/servers" class="hover:text-zinc-300 transition-colors">Servers</a>
+    <span>/</span>
+    <span class="text-zinc-300">{{ guild.name }}</span>
+  </div>
+
+  <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
+    <div class="flex items-center space-x-4">
+      {% if guild.icon %}
+        <img src="https://cdn.discordapp.com/icons/{{ guild.id }}/{{ guild.icon }}.png" class="w-12 h-12 rounded-xl" />
+      {% else %}
+        <div class="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center font-bold">{{ guild.name[0] }}</div>
+      {% endif %}
+      <div>
+        <h1 class="text-xl font-bold text-zinc-100">{{ guild.name }}</h1>
+        <p class="text-xs text-zinc-500">Configure real-time security and welcome messages</p>
+      </div>
+    </div>
+  </div>
+
+  {% if saved %}
+    <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold flex items-center gap-2">
+      <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+      Settings updated successfully. Changes are live in scyth_database.db.
+    </div>
+  {% endif %}
+
+  <form method="POST" action="/servers/{{ guild.id }}/save" class="space-y-6">
+
+    <!-- Security Toggles -->
+    <div class="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 space-y-6">
+      <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wider">Security Modules</h2>
+
+      <div class="space-y-5">
+        <!-- Anti-Nuke -->
+        <label class="flex items-center justify-between cursor-pointer">
+          <div class="space-y-0.5">
+            <span class="text-sm font-medium text-zinc-200">Anti-Nuke Protection</span>
+            <p class="text-xs text-zinc-500">Auto-ban administrators deleting more than 3 channels or roles in under 10 seconds.</p>
+          </div>
+          <input type="checkbox" name="anti_nuke" {% if settings.anti_nuke == 1 %}checked{% endif %} class="w-4 h-4 rounded text-purple-600 bg-zinc-800 border-zinc-700 focus:ring-purple-500">
+        </label>
+
+        <!-- Anti-Invite -->
+        <label class="flex items-center justify-between cursor-pointer border-t border-zinc-800/60 pt-4">
+          <div class="space-y-0.5">
+            <span class="text-sm font-medium text-zinc-200">Anti-Invite Link Filter</span>
+            <p class="text-xs text-zinc-500">Automatically delete discord.gg or discord.com/invite links sent by non-admins.</p>
+          </div>
+          <input type="checkbox" name="anti_invite" {% if settings.anti_invite == 1 %}checked{% endif %} class="w-4 h-4 rounded text-purple-600 bg-zinc-800 border-zinc-700 focus:ring-purple-500">
+        </label>
+
+        <!-- Anti-Raid -->
+        <label class="flex items-center justify-between border-t border-zinc-800/60 pt-4 cursor-pointer">
+          <div class="space-y-0.5">
+            <span class="text-sm font-medium text-zinc-200">Anti-Join Raid Shield</span>
+            <p class="text-xs text-zinc-500">Kick newly joined members if more than 5 users join in under 10 seconds.</p>
+          </div>
+          <input type="checkbox" name="anti_raid" {% if settings.anti_raid == 1 %}checked{% endif %} class="w-4 h-4 rounded text-purple-600 bg-zinc-800 border-zinc-700 focus:ring-purple-500">
+        </label>
+      </div>
+    </div>
+
+    <!-- Welcome System -->
+    <div class="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 space-y-4">
+      <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wider">Welcome Greetings</h2>
+
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Welcome Channel ID</label>
+          <input type="text" name="welcome_channel_id" value="{{ settings.welcome_channel_id or '' }}" placeholder="e.g. 112233445566778899"
+                 class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-zinc-200 focus:outline-none focus:border-purple-500">
+          <span class="text-[11px] text-zinc-500">Right-click your greeting channel in Discord and copy Channel ID.</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Custom Welcome Message</label>
+          <textarea name="welcome_message" rows="3"
+                    class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-zinc-200 focus:outline-none focus:border-purple-500">{{ settings.welcome_message or '' }}</textarea>
+          <span class="text-[11px] text-zinc-500">Variables: <code>{user}</code> mentions member, <code>{server}</code> displays server name.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end">
+      <button type="submit" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-xs text-white transition-colors shadow-lg shadow-purple-600/20">
+        Save Settings
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
