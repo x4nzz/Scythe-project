@@ -127,7 +127,7 @@ body::after {
   backdrop-filter: blur(10px);
   box-shadow: var(--glass-shadow);
   position: relative;
-  overflow: hover;
+  overflow: hidden;
 }
 
 .glass-card::before {
