@@ -32,10 +32,10 @@
     </p>
 
     <div class="flex flex-wrap justify-center gap-4 pt-6">
-      <a href="{{ invite_url }}" target="_blank" class="neon-btn px-8 py-3 text-lg font-semibold tracking-wider transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]">
+      <a href="{{ invite_url }}" target="_blank" class="neon-btn px-6 py-3 text-base font-semibold tracking-wider rounded-xl transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]">
         DEPLOY SCYTH CORE
       </a>
-      <a href="/commands" class="neon-btn px-8 py-3 text-lg font-semibold tracking-wider border border-white/[0.1] bg-black/50 hover:bg-black/60 transition-all">
+      <a href="/commands" class="neon-btn px-6 py-3 text-base font-semibold tracking-wider rounded-xl border border-white/[0.1] bg-black/50 hover:bg-black/60 transition-all">
         ACCESS SCYTH VAULT
       </a>
     </div>
@@ -217,6 +217,19 @@
           timeEl.innerText = fmtTime(data.duration);
           glow.style.opacity = "0.15";
         }
+      } else {
+        // No data: reset to standby
+        isLive = false;
+        currentElapsed = 0;
+        totalDuration = 0;
+        indicator.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-zinc-600"></span> STANDBY';
+        title.innerText = '–';
+        title.href = "#";
+        artist.innerText = 'No active session';
+        bar.style.width = '0%';
+        timeEl.innerText = '00:00';
+        timeDur.innerText = '00:00';
+        glow.style.opacity = '0.0';
       }
     } catch (err) {
       console.log("Telemetry sync failed", err);

@@ -60,12 +60,12 @@
 
             {% if g.bot_joined %}
               <a href="/servers/{{ g.id }}"
-                 class="neon-btn w-full mt-4 text-xs font-semibold px-4 py-2">
+                 class="neon-btn w-full mt-4 text-xs font-semibold px-6 py-3 rounded-xl">
                 CONFIGURE NODE
               </a>
             {% else %}
               <a href="{{ g.invite_link }}" target="_blank"
-                 class="neon-btn w-full mt-4 text-xs font-semibold px-4 py-2 border border-white/[0.1]">
+                 class="neon-btn w-full mt-4 text-xs font-semibold px-6 py-3 rounded-xl border border-white/[0.1]">
                 INITIATE CONNECTION
               </a>
             {% endif %}

@@ -1058,9 +1058,11 @@ body::after {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  min-height: 44px;
+  font-size: 0.95rem;
   transition: all var(--transition-speed) var(--transition-cubic);
   z-index: 1;
 }
@@ -1244,4 +1246,169 @@ body::after {
   .glitch::after {
     clip: rect(0, 9999px, 0, 0) !important;
   }
+}
+
+/* Missing class definitions for neon consistency */
+
+/* Neon glow text for headings */
+.neonglow-text {
+  color: #fff;
+  text-shadow:
+    0 0 3px var(--neon-cyan),
+    0 0 6px var(--neon-cyan),
+    0 0 9px var(--neon-cyan),
+    0 0 12px var(--neon-cyan),
+    0 0 15px var(--neon-cyan),
+    0 0 18px var(--neon-cyan),
+    0 0 21px var(--neon-cyan);
+  position: relative;
+  animation: neonPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 3px var(--neon-cyan),
+      0 0 6px var(--neon-cyan),
+      0 0 9px var(--neon-cyan),
+      0 0 12px var(--neon-cyan),
+      0 0 15px var(--neon-cyan),
+      0 0 18px var(--neon-cyan),
+      0 0 21px var(--neon-cyan);
+  }
+  50% {
+    text-shadow:
+      0 0 5px var(--neon-cyan),
+      0 0 8px var(--neon-cyan),
+      0 0 11px var(--neon-cyan),
+      0 0 14px var(--neon-cyan),
+      0 0 17px var(--neon-cyan),
+      0 0 20px var(--neon-cyan),
+      0 0 23px var(--neon-cyan);
+  }
+}
+
+/* Neon checkbox styling */
+.neon-checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.25rem;
+  background-color: var(--bg-quaternary);
+  cursor: pointer;
+  transition: all var(--transition-speed) var(--transition-cubic);
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+}
+
+.neon-checkbox:checked {
+  background-color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+}
+
+.neon-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 40%;
+  top: 20%;
+  width: 2px;
+  height: 4px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.neon-checkbox:hover:not(:checked) {
+  border-color: var(--neon-border);
+}
+
+/* Neon input styling */
+.neon-input {
+  background: var(--bg-quaternary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  transition: all var(--transition-speed) var(--transition-cubic);
+}
+
+.neon-input:focus {
+  outline: none;
+  border-color: var(--neon-border);
+  box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.2);
+  background-color: rgba(13, 13, 16, 0.7);
+}
+
+.neon-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Neon input container for command list */
+.neon-input-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all var(--transition-speed) var(--transition-cubic);
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.neon-input-container:hover {
+  border-color: var(--neon-border-hover);
+  background-color: var(--bg-secondary);
+  transform: translateY(-1px);
+}
+
+.neon-input-container:active {
+  transform: translateY(0);
+}
+
+.neon-input-container code {
+  background: var(--bg-quaternary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Filter button styling */
+.filter-btn {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-speed) var(--transition-cubic);
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn:hover {
+  border-color: var(--neon-border);
+  background-color: var(--neon-gradient);
+  color: white;
+  box-shadow: var(--neon-glow);
+}
+
+.filter-btn:active {
+  transform: scale(0.97);
+}
+
+.filter-btn.active {
+  background: var(--neon-gradient);
+  color: white;
+  box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.3);
 }
