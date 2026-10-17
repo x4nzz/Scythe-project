@@ -1262,7 +1262,7 @@ class ScythBot(commands.Bot):
         asyncio.create_subprocess_exec(
             "npm", "run", "dev",
             cwd=os.path.join(os.path.dirname(__file__), "dashboard"),
-            env={**os.environ, "HOST": "37.27.141.177", "PORT": "25606"},
+            env={**os.environ, "HOST": os.environ.get("DASHBOARD_HOST", "37.27.141.177"), "PORT": os.environ.get("DASHBOARD_PORT", "25606")},
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -3223,7 +3223,7 @@ async def boosterrole_award(ctx: commands.Context, member: discord.Member = None
     await ctx.send(embed=embed)
 
 @boosterrole_award.command(name="unset")
-@commands.has_permissions(manage_roles=ManageRole)
+@commands.has_permissions(manage_roles=True)
 async def boosterrole_award_unset(ctx: commands.Context, member: discord.Member = None):
     """Remove the booster role from a member."""
     if member is None:
