@@ -1271,12 +1271,12 @@ class ScythBot(commands.Bot):
         nodes = [
             wavelink.Node(
                 uri="https://lavalink.jirayu.net:443",
-                password="",
+                password=os.environ.get("LAVALINK_PASSWORD_1", ""),
                 inactive_player_timeout=300
             ),
             wavelink.Node(
                 uri="https://lava-v4.millohost.my.id:443",
-                password="",
+                password=os.environ.get("LAVALINK_PASSWORD_2", ""),
                 inactive_player_timeout=300
             ),
         ]
