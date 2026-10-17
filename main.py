@@ -549,6 +549,16 @@ COMMAND_SYNTAX = {
         "desc": "Bans a user and adds them to a persistent SQLite blacklist.",
         "usage": ["• `!hardban <user_id> [reason]` — Permanently blacklist and ban a user."]
     },
+    "tempban": {
+        "title": "Tempban Command",
+        "desc": "Temporarily bans a member for a specified duration.",
+        "usage": ["• `!tempban <member> <duration> [reason]` — Tempban a user (e.g., 10m, 1h, 1d)."]
+    },
+    "softban": {
+        "title": "Softban Command",
+        "desc": "Bans and immediately unbans a user to delete their message history.",
+        "usage": ["• `!softban <member> [reason]` — Softban a user."]
+    },
     "fakeperms": {
         "title": "Fake Permissions Commands",
         "desc": "Grant specific roles permission to use bot commands without admin access.",
@@ -596,6 +606,17 @@ COMMAND_SYNTAX = {
         "title": "Member Count Command",
         "desc": "Displays clean server member count statistics.",
         "usage": ["• `!membercount` — View server counts."]
+    },
+    "prefix": {
+        "title": "Prefix Command",
+        "desc": "View or change the command prefix for this server.",
+        "usage": [
+            "• `!prefix` — View the current prefix.",
+            "• `!prefix view` — View the current prefix.",
+            "• `!prefix set <new_prefix>` — Set a new prefix.",
+            "• `!prefix remove` — Reset prefix to default (`!`).",
+            "• `!prefix self` — View the prefix the bot is currently responding to."
+        ]
     }
 }
 
@@ -696,6 +717,15 @@ def init_db():
             )
         """)
         cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tempbans (
+                guild_id INTEGER,
+                user_id INTEGER,
+                unban_time REAL,
+                reason TEXT,
+                PRIMARY KEY (guild_id, user_id)
+            )
+        """)
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS fake_permissions (
                 guild_id INTEGER,
                 role_id INTEGER,
@@ -728,6 +758,31 @@ def init_db():
                 duration INTEGER,
                 started_at REAL,
                 is_playing INTEGER
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS guild_prefixes (
+                guild_id INTEGER PRIMARY KEY,
+                prefix TEXT
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS booster_role_settings (
+                guild_id INTEGER PRIMARY KEY,
+                role_id INTEGER,
+                color INTEGER,
+                name TEXT,
+                icon TEXT,
+                mentionable BOOLEAN,
+                limit INTEGER,
+                filter_role_id INTEGER
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS booster_role_awards (
+                guild_id INTEGER,
+                user_id INTEGER,
+                PRIMARY KEY (guild_id, user_id)
             )
         """)
         conn.commit()
@@ -764,6 +819,28 @@ def clear_warnings(guild_id: int, user_id: int) -> int:
         cursor.execute("DELETE FROM warnings WHERE guild_id = ? AND user_id = ?", (guild_id, user_id))
         conn.commit()
         return cursor.rowcount
+
+def add_tempban(guild_id: int, user_id: int, unban_time: float, reason: str):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT OR REPLACE INTO tempbans (guild_id, user_id, unban_time, reason) VALUES (?, ?, ?, ?)",
+            (guild_id, user_id, unban_time, reason)
+        )
+        conn.commit()
+
+def remove_tempban(guild_id: int, user_id: int) -> bool:
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM tempbans WHERE guild_id = ? AND user_id = ?", (guild_id, user_id))
+        conn.commit()
+        return cursor.rowcount > 0
+
+def get_tempbans(guild_id: int):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, unban_time, reason FROM tempbans WHERE guild_id = ?", (guild_id,))
+        return cursor.fetchall()
 
 def save_vm_config(guild_id: int, category_id: int, jtc_id: int, interface_id: int):
     with sqlite3.connect(DB_NAME) as conn:
@@ -826,6 +903,29 @@ def remove_afk_status(user_id: int, guild_id: int) -> bool:
         cursor.execute("DELETE FROM afk_users WHERE user_id = ? AND guild_id = ?", (user_id, guild_id))
         conn.commit()
         return cursor.rowcount > 0
+def get_guild_prefix(guild_id: int) -> str:
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT prefix FROM guild_prefixes WHERE guild_id = ?", (guild_id,))
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        return "!"  # default prefix
+
+def set_guild_prefix(guild_id: int, prefix: str) -> None:
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT OR REPLACE INTO guild_prefixes (guild_id, prefix) VALUES (?, ?)",
+            (guild_id, prefix)
+        )
+        conn.commit()
+
+def server_prefix(bot, message):
+    if not message.guild:
+        return "!"
+    return get_guild_prefix(message.guild.id)
+
 
 # ==========================================
 # FAKE PERMISSIONS CHECK HELPER
@@ -850,6 +950,73 @@ def has_permission_or_fake(discord_perm: str = None):
                     return True
         raise commands.MissingPermissions([discord_perm or f"FakePerm: {ctx.command.name}"])
     return commands.check(predicate)
+def get_booster_role_settings(guild_id: int):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT role_id, color, name, icon, mentionable, limit, filter_role_id FROM booster_role_settings WHERE guild_id = ?", (guild_id,))
+        row = cursor.fetchone()
+        if row:
+            return row
+        return None
+
+def set_booster_role_settings(guild_id: int, role_id: int = None, color: int = None, name: str = None, icon: str = None, mentionable: bool = None, limit: int = None, filter_role_id: int = None):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM booster_role_settings WHERE guild_id = ?", (guild_id,))
+        exists = cursor.fetchone()
+        if exists:
+            updates = []
+            params = []
+            if role_id is not None:
+                updates.append("role_id = ?")
+                params.append(role_id)
+            if color is not None:
+                updates.append("color = ?")
+                params.append(color)
+            if name is not None:
+                updates.append("name = ?")
+                params.append(name)
+            if icon is not None:
+                updates.append("icon = ?")
+                params.append(icon)
+            if mentionable is not None:
+                updates.append("mentionable = ?")
+                params.append(mentionable)
+            if limit is not None:
+                updates.append("limit = ?")
+                params.append(limit)
+            if filter_role_id is not None:
+                updates.append("filter_role_id = ?")
+                params.append(filter_role_id)
+            if updates:
+                params.append(guild_id)
+                cursor.execute(f"UPDATE booster_role_settings SET {', '.join(updates)} WHERE guild_id = ?", params)
+        else:
+            cursor.execute("""
+                INSERT INTO booster_role_settings (guild_id, role_id, color, name, icon, mentionable, limit, filter_role_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (guild_id, role_id, color, name, icon, mentionable, limit, filter_role_id))
+        conn.commit()
+
+def get_booster_role_award(guild_id: int, user_id: int) -> bool:
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM booster_role_awards WHERE guild_id = ? AND user_id = ?", (guild_id, user_id))
+        return cursor.fetchone() is not None
+
+def add_booster_role_award(guild_id: int, user_id: int):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("INSERT OR IGNORE INTO booster_role_awards (guild_id, user_id) VALUES (?, ?)", (guild_id, user_id))
+        conn.commit()
+
+def remove_booster_role_award(guild_id: int, user_id: int):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM booster_role_awards WHERE guild_id = ? AND user_id = ?", (guild_id, user_id))
+        conn.commit()
+
+
 
 # ==========================================
 # MUSIC PLAYER INFRASTRUCTURE
@@ -1087,41 +1254,34 @@ class ScythBot(commands.Bot):
 
     async def setup_hook(self):
         init_db()
+        self.command_prefix = server_prefix
         self.add_view(VoiceMasterInterface())
         check_scheduled_nukes.start()
+
+        # Start dashboard
+        asyncio.create_subprocess_exec(
+            "npm", "run", "dev",
+            cwd=os.path.join(os.path.dirname(__file__), "dashboard"),
+            env={**os.environ, "HOST": "37.27.141.177", "PORT": "25606"},
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
 
         # Connect to active public Lavalink v4 nodes
         nodes = [
             wavelink.Node(
                 uri="https://lavalink.jirayu.net:443",
-                password="youshallnotpass",
+                password="",
                 inactive_player_timeout=300
             ),
             wavelink.Node(
                 uri="https://lava-v4.millohost.my.id:443",
-                password="https://discord.gg/mjS5J2K3ep",
+                password="",
                 inactive_player_timeout=300
             ),
         ]
         await wavelink.Pool.connect(nodes=nodes, client=self, cache_capacity=100)
 
-   # Launch Web Dashboard concurrently (checks both root and dashboard/ folder)
-        try:
-            try:
-                from app import app as web_app
-            except ModuleNotFoundError:
-                from dashboard.app import app as web_app
-
-            import uvicorn
-            web_port = int(os.getenv("SERVER_PORT", os.getenv("PORT", 25606)))
-            config = uvicorn.Config(web_app, host="0.0.0.0", port=web_port, log_level="warning")
-            server = uvicorn.Server(config)
-            asyncio.create_task(server.serve())
-            print(f"Web Dashboard online on port {web_port}")
-        except ModuleNotFoundError:
-            print("[Warning] Could not find 'app.py' in root or in 'dashboard/' folder. Bot is starting without the web dashboard.")
-        except Exception as e:
-            print(f"[Warning] Web Dashboard error: {e}")
 bot = ScythBot()
 
 # ==========================================
@@ -1538,6 +1698,38 @@ async def check_scheduled_nukes():
 
 @check_scheduled_nukes.before_loop
 async def before_check_scheduled_nukes():
+    await bot.wait_until_ready()
+
+@tasks.loop(seconds=30)
+async def check_tempbans():
+    now = time.time()
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT guild_id, user_id, reason FROM tempbans WHERE unban_time <= ?", (now,))
+        expired = cursor.fetchall()
+
+        for guild_id, user_id, reason in expired:
+            guild = bot.get_guild(guild_id)
+            if not guild:
+                # Remove the tempban if guild not found
+                remove_tempban(guild_id, user_id)
+                continue
+            try:
+                user = await bot.fetch_user(user_id)
+                await guild.unban(user, reason=f"Tempban expired: {reason}")
+                log_mod_action(guild_id, "TEMPBAN EXPIRED", user_id, bot.user.id, f"Tempban expired: {reason}")
+                remove_tempban(guild_id, user_id)
+            except discord.NotFound:
+                # User not found, just remove the tempban
+                remove_tempban(guild_id, user_id)
+            except discord.Forbidden:
+                # Lack permissions to unban, but we still remove the tempban from DB to avoid retry
+                remove_tempban(guild_id, user_id)
+            except Exception as e:
+                print(f"Error unbaning user {user_id} from guild {guild_id} after tempban: {e}")
+
+@check_tempbans.before_loop
+async def before_check_tempbans():
     await bot.wait_until_ready()
 
 # ==========================================
@@ -2667,6 +2859,472 @@ async def unlock(ctx: commands.Context):
     )
     embed.set_footer(text="scyth • moderation")
     await ctx.send(embed=embed)
+# ==========================================
+# PREFIX COMMAND GROUP
+# ==========================================
+@bot.group(name="prefix", invoke_without_command=True)
+async def prefix(ctx: commands.Context):
+    """View or change the command prefix for this server."""
+    await ctx.send(embed=get_syntax_embed("prefix"))
+
+@prefix.command(name="view")
+async def prefix_view(ctx: commands.Context):
+    """View the current prefix for this server."""
+    prefix = get_guild_prefix(ctx.guild.id)
+    embed = discord.Embed(
+        title="Prefix",
+        description=f"The current prefix for this server is: `{prefix}`",
+        color=EMBED_COLOR
+    )
+    await ctx.send(embed=embed)
+
+@prefix.command(name="set")
+@commands.has_permissions(administrator=True)
+async def prefix_set(ctx: commands.Context, *, new_prefix: str):
+    """Set the command prefix for this server."""
+    if len(new_prefix) > 10:
+        return await ctx.send(embed=discord.Embed(description=f"{EMOJI_CROSS} Prefix must be 10 characters or less.", color=EMBED_COLOR))
+    set_guild_prefix(ctx.guild.id, new_prefix)
+    embed = discord.Embed(
+        title="Prefix Updated",
+        description=f"The prefix for this server has been updated to: `{new_prefix}`",
+        color=EMBED_COLOR
+    )
+    await ctx.send(embed=embed)
+
+@prefix.command(name="remove")
+@commands.has_permissions(administrator=True)
+async def prefix_remove(ctx: commands.Context):
+    """Remove the custom prefix for this server, reverting to the default."""
+    set_guild_prefix(ctx.guild.id, "!")
+    embed = discord.Embed(
+        title="Prefix Reset",
+        description="The prefix for this server has been reset to the default (`!`).",
+        color=EMBED_COLOR
+    )
+    await ctx.send(embed=embed)
+
+@prefix.command(name="self")
+async def prefix_self(ctx: commands.Context):
+    """View the prefix the bot is currently responding to in this channel."""
+    # Determine the prefix used to invoke this command
+    # We can't easily get the invoked prefix from the context, but we can show the guild prefix.
+    # Alternatively, we can show the prefix that the bot is using for this guild.
+    prefix = get_guild_prefix(ctx.guild.id)
+    embed = discord.Embed(
+        title="Self Prefix",
+        description=f"The bot is currently responding to prefix: `{prefix}` in this server.",
+        color=EMBED_COLOR
+    )
+    await ctx.send(embed=embed)
+@bot.group(name="boosterrole", invoke_without_command=True)
+async def boosterrole(ctx: commands.Context):
+    """View or change the booster role for this server."""
+    await ctx.send(embed=get_syntax_embed("boosterrole"))
+
+@boosterrole.command(name="view")
+async def boosterrole_view(ctx: commands.Context):
+    """View the current booster role for this server."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, name, icon, mentionable, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    embed = discord.Embed(title="Booster Role", color=EMBED_COLOR)
+    embed.add_field(name="Role", value=role.mention if role else f"ID: {role_id}", inline=False)
+    embed.add_field(name="Color", value=str(color) if color is not None else "Not set", inline=True)
+    embed.add_field(name="Name", value=name if name is not None else "Not set", inline=True)
+    embed.add_field(name="Icon", value=icon if icon is not None else "Not set", inline=True)
+    embed.add_field(name="Mentionable", value=str(mentionable).title() if mentionable is not None else "Not set", inline=True)
+    embed.add_field(name="Limit", value=str(limit) if limit is not None else "Not set", inline=True)
+    embed.add_field(name="Filter Role", value=f"<@&{filter_role_id}>" if filter_role_id is not None else "Not set", inline=True)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="color")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_color(ctx: commands.Context, color_str: str = None):
+    """Set the color of the booster role."""
+    if color_str is None:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    try:
+        color_str = color_str.lstrip('#')
+        color = int(color_str, 16)
+    except ValueError:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Invalid color format. Use a hex color like `#FF0000` or `FF0000`.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, _, name, icon, mentionable, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    try:
+        await role.edit(color=color)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to edit that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to edit role color.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    set_booster_role_settings(ctx.guild.id, role_id=role_id, color=color, name=name, icon=icon, mentionable=mentionable, limit=limit, filter_role_id=filter_role_id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role color updated to `#{color_str.upper()}`.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="name")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_name(ctx: commands.Context, *, name: str = None):
+    """Set the name of the booster role."""
+    if name is None:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, _, icon, mentionable, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    try:
+        await role.edit(name=name)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to edit that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to edit role name.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    set_booster_role_settings(ctx.guild.id, role_id=role_id, color=color, name=name, icon=icon, mentionable=mentionable, limit=limit, filter_role_id=filter_role_id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role name updated to `{name}`.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="icon")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_icon(ctx: commands.Context, icon: str = None):
+    """Set the icon (emoji) of the booster role."""
+    if icon is None:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, name, _, mentionable, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    try:
+        await role.edit(icon=icon)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to edit that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException as e:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to edit role icon: {e}", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    set_booster_role_settings(ctx.guild.id, role_id=role_id, color=color, name=name, icon=icon, mentionable=mentionable, limit=limit, filter_role_id=filter_role_id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role icon updated to {icon}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="share")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_share(ctx: commands.Context):
+    """Allow the booster role to be mentioned."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, name, icon, _, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    try:
+        await role.edit(mentionable=True)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to edit that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to edit role mentionable.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    set_booster_role_settings(ctx.guild.id, role_id=role_id, color=color, name=name, icon=icon, mentionable=True, limit=limit, filter_role_id=filter_role_id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role is now mentionable.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="unshare")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_unshare(ctx: commands.Context):
+    """Disallow the booster role from being mentioned."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, name, icon, _, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    try:
+        await role.edit(mentionable=False)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to edit that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to edit role mentionable.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    set_booster_role_settings(ctx.guild.id, role_id=row_id, color=color, name=name, icon=icon, mentionable=False, limit=limit, filter_role_id=filter_role_id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role is no longer mentionable.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="base")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_base(ctx: commands.Context, role: discord.Role = None):
+    """Set the booster role to a specific role."""
+    if role is None:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    set_booster_role_settings(ctx.guild.id, role_id=role.id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role set to {role.mention}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="limit")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_limit(ctx: commands.Context, limit: int = None):
+    """Set the maximum number of users that can be awarded the booster role."""
+    if limit is None or limit < 0:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, name, icon, mentionable, _, filter_role_id = settings
+    set_booster_role_settings(ctx.guild.id, role_id=row_id, color=color, name=name, icon=icon, mentionable=mentionable, limit=limit, filter_role_id=filter_role_id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role award limit set to {limit}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="cleanup")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_cleanup(ctx: commands.Context):
+    """Remove the booster role from users who are not boosting."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, _, _, _, _, _, _ = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    removed = 0
+    for member in ctx.guild.members:
+        if role in member.roles and get_booster_role_award(ctx.guild.id, member.id):
+            if member.premium_since is None:
+                try:
+                    await member.remove_roles(role)
+                    remove_booster_role_award(ctx.guild.id, member.id)
+                    removed += 1
+                except discord.Forbidden:
+                    pass
+                except discord.HTTPException:
+                    pass
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Cleaned up {removed} member(s) who had the booster role but are not boosting.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.command(name="random")
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_random(ctx: commands.Context):
+    """Award the booster role to a random member in the guild."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, name, icon, mentionable, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {role_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    if limit is not None:
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM booster_role_awards WHERE guild_id = ?", (ctx.guild.id,))
+            count = cursor.fetchone()[0]
+            if count >= limit:
+                embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role award limit ({limit}) has been reached.", color=EMBED_COLOR)
+                return await ctx.send(embed=embed)
+    members = ctx.guild.members
+    if filter_role_id is not None:
+        filter_role = ctx.guild.get_role(filter_role_id)
+        if not filter_role:
+            embed = discord.Embed(description=f"{EMOJI_CROSS} Filter role not found (ID: {filter_role_id}). It may have been deleted.", color=EMBED_COLOR)
+            return await ctx.send(embed=embed)
+        members = [m for m in members if filter_role in m.roles]
+    if not members:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No members eligible for the booster role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    import random
+    member = random.choice(members)
+    try:
+        await member.add_roles(role)
+        add_booster_role_award(ctx.guild.id, member.id)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to assign that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to assign role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role awarded to {member.mention}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole.group(name="award", invoke_without_command=True)
+@commands.has_permissions(manage_roles=True)
+async def boosterrole_award(ctx: commands.Context, member: discord.Member = None):
+    """Award the booster role to a member."""
+    if member is None:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, color, name, icon, mentionable, limit, filter_role_id = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {route_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    if limit is not None:
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM booster_role_awards WHERE guild_id = ?", (ctx.guild.id,))
+            count = cursor.fetchone()[0]
+            if count >= limit:
+                embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role award limit ({limit}) has been reached.", color=EMBED_COLOR)
+                return await ctx.send(embed=embed)
+    if filter_role_id is not None:
+        filter_role = ctx.guild.get_role(filter_role_id)
+        if not filter_role:
+            embed = discord.Embed(description=f"{EMOJI_CROSS} Filter role not found (ID: {filter_role_id}). It may have been deleted.", color=EMBED_COLOR)
+            return await ctx.send(embed=embed)
+        if filter_role not in member.roles:
+            embed = discord.Embed(description=f"{EMOJI_CROSS} {member.mention} does not have the required role {filter_role.mention} to receive the booster role.", color=EMBED_COLOR)
+            return await ctx.send(embed=embed)
+    try:
+        await member.add_roles(role)
+        add_booster_role_award(ctx.guild.id, member.id)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to assign that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to assign role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role awarded to {member.mention}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole_award.command(name="unset")
+@commands.has_permissions(manage_roles=ManageRole)
+async def boosterrole_award_unset(ctx: commands.Context, member: discord.Member = None):
+    """Remove the booster role from a member."""
+    if member is None:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    role_id, _, _, _, _, _, _ = settings
+    role = ctx.guild.get_role(role_id)
+    if not role:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {route_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    try:
+        await member.remove_roles(role)
+        remove_booster_role_award(ctx.guild.id, member.id)
+    except discord.Forbidden:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} I lack permissions to remove that role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    except discord.HTTPException:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Failed to remove role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role removed from {member.mention}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole_award.command(name="view")
+async def boosterrole_award_view(ctx: commands.Context):
+    """View which members have been awarded the booster role."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <route>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    route_id, _, _, _, _, _, _ = settings
+    route = ctx.guild.get_role(route_id)
+    if not route:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Booster role not found (ID: {route_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id FROM booster_role_awards WHERE guild_id = ?", (ctx.guild.id,))
+        rows = cursor.fetchall()
+    if not rows:
+        embed = discord.Embed(description=f"{EMOJI_INFO} No members have been awarded the booster role.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    embed = discord.Embed(title=f"Booster Role Awardees for {route.name}", color=EMBED_COLOR)
+    desc = []
+    for user_id, in rows:
+        member = ctx.guild.get_member(user_id)
+        if member:
+            desc.append(f"• {member.mention}")
+        else:
+            desc.append(f"• ID: {user_id} (left the server)")
+    embed.description = "\n".join(desc)
+    await ctx.send(embed=embed)
+
+@boosterrole.group(name="filter", invoke_without_command=True)
+@commands.has_permissions(manage_roles=ManageRole)
+async def boosterrole_filter(ctx: commands.Context, role: discord.Role = None):
+    """Set a filter role required to be eligible for the booster role award."""
+    if role is None:
+        return await ctx.send(embed=get_syntax_embed("boosterrole"))
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <role>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    route_id, color, name, icon, mentionable, limit, _ = settings
+    set_booster_role_settings(ctx.guild.id, route_id=route_id, color=color, name=name, icon=icon, mentionable=mentionable, limit=limit, filter_route_id=role.id)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role filter set to {role.mention}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole_filter.command(name="remove")
+@commands.has_permissions(manage_roles=ManageRole)
+async def boosterrole_filter_remove(ctx: commands.Context):
+    """Remove the filter role for the booster role award."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <route>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    route_id, color, name, icon, mentionable, limit, _ = settings
+    set_booster_role_settings(ctx.guild.id, route_id=route_id, color=color, name=name, icon=icon, mentionable=mentionable, limit=limit, filter_route_id=None)
+    embed = discord.Embed(description=f"{EMOJI_CHECKMARK} Booster role filter removed.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
+@boosterrole_filter.command(name="list")
+async def boosterrole_filter_list(ctx: commands.Context):
+    """View the current filter role for the booster role award."""
+    settings = get_booster_role_settings(ctx.guild.id)
+    if not settings:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} No booster role set for this server. Use `!boosterrole set <route>` to set one first.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    _, _, _, _, _, _, filter_route_id = settings
+    if filter_route_id is None:
+        embed = discord.Embed(description=f"{EMOJI_INFO} No filter route set for the booster route.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    route = ctx.guild.get_role(filter_route_id)
+    if not route:
+        embed = discord.Embed(description=f"{EMOJI_CROSS} Filter route not found (ID: {filter_route_id}). It may have been deleted.", color=EMBED_COLOR)
+        return await ctx.send(embed=embed)
+    embed = discord.Embed(description=f"The current filter route for the booster role award is {route.mention}.", color=EMBED_COLOR)
+    await ctx.send(embed=embed)
+
 
 # ==========================================
 # INTERACTIVE DROPDOWN HELP COMMAND (FIXED EMOJIS & SERVER NAME)
@@ -2766,7 +3424,12 @@ HELP_CATEGORIES = {
             "`!fakeperms list` — View all fake permission mappings",
             "`!ar add <trigger> | <response>` — Add auto-responder",
             "`!ar remove <trigger>` — Delete auto-responder",
-            "`!ar list` — View active triggers"
+            "`!ar list` — View active triggers",
+            "`!prefix` — View or change the prefix.",
+            "`!prefix view` — View the current prefix.",
+            "`!prefix set <new_prefix>` — Set a new prefix.",
+            "`!prefix remove` — Reset prefix to default (`!`).",
+            "`!prefix self` — View the prefix the bot is currently responding to."
         ]
     }
 }
