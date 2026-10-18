@@ -3723,24 +3723,6 @@ async def verify_setup(ctx: commands.Context):
     view = VerifyView(verified_role_id, unverified_role_id)
     await ctx.send(embed=embed, view=view)
 
-@verify.command(name="role")
-@commands.has_permissions(manage_roles=True)
-async def verify_role(ctx: commands.Context, role: discord.Role):
-    """Set the role to give on verification."""
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT OR REPLACE INTO verification (guild_id, verified_role_id, unverified_role_id)
-            VALUES (?, ?, COALESCE((SELECT unverified_role_id FROM verification WHERE guild_id = ?), NULL))
-        """, (ctx.guild.id, role.id, ctx.guild.id))
-        conn.commit()
-
-    embed = discord.Embed(
-        description=f"{EMOJI_CHECKMARK} Verified role set to {role.mention}",
-        color=EMBED_COLOR
-    )
-    await ctx.send(embed=embed)
-
 # ==========================================
 # SCRIPT EXECUTION
 # ==========================================
