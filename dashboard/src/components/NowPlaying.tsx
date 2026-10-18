@@ -10,9 +10,9 @@ export default function NowPlaying() {
     uri: string;
     artwork: string;
     duration: number;
-    elapsed: number;
+    started_at: number;
     is_playing: boolean;
-    guild_name: string;
+    server_name: string;
   } | null>(null);
 
   useEffect(() => {
@@ -54,7 +54,9 @@ export default function NowPlaying() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  const progressPercent = data.duration > 0 ? (data.elapsed / data.duration) * 100 : 0;
+  // Compute elapsed time in seconds
+  const elapsed = data.started_at ? Math.floor(Date.now() / 1000 - data.started_at) : 0;
+  const progressPercent = data.duration > 0 ? (elapsed / data.duration) * 100 : 0;
 
   return (
     <div className="relative flex items-center gap-4 bg-dark-2 border border-dark-3 rounded-lg px-4 py-3 hover:border-silver/50 transition-all duration-300">
@@ -75,7 +77,7 @@ export default function NowPlaying() {
       </div>
       <div className="flex-1 space-y-2">
         <p className="text-xs text-dark-silver">
-          Playing in {data.guild_name}
+          Playing in {data.server_name}
         </p>
         <div className="flex items-center gap-2">
           <a
@@ -89,7 +91,7 @@ export default function NowPlaying() {
         </div>
         <p className="text-xs text-dark-silver">{data.artist}</p>
         <div className="flex items-center gap-2 text-xs text-dark-silver">
-          <p className="flex-shrink-0">{formatTime(data.elapsed)}</p>
+          <p className="flex-shrink-0">{formatTime(elapsed)}</p>
           <div className="flex-1 h-1 bg-dark-3 rounded">
             <div
               className={`h-full bg-silver rounded transition-all duration-200 w-[${progressPercent}%]`}

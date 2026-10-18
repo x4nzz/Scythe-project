@@ -3739,7 +3739,7 @@ if __name__ == "__main__":
             else:
                 uptime_pct = 100.0
 
-            total_users = sum(guild.approximate_member_count for guild in bot.guilds) if bot.guilds else 0
+            total_users = sum(guild.member_count for guild in bot.guilds) if bot.guilds else 0
 
             return web.json_response({
                 "servers": len(bot.guilds),
@@ -3762,27 +3762,42 @@ if __name__ == "__main__":
                     row = cursor.fetchone()
                     if row:
                         title, artist, uri, artwork, duration, started_at, is_playing = row
-                        elapsed = int(time.time() - started_at) if started_at else 0
                         # Get guild name
                         guild = bot.get_guild(MAIN_GUILD_ID)
                         guild_name = guild.name if guild else str(MAIN_GUILD_ID)
                         return web.json_response({
+                            "is_playing": bool(is_playing),
                             "title": title,
                             "artist": artist,
                             "uri": uri,
                             "artwork": artwork,
                             "duration": duration,
-                            "elapsed": elapsed,
-                            "is_playing": bool(is_playing),
-                            "guild_name": guild_name
+                            "started_at": started_at,
+                            "server_name": guild_name
                         })
                     else:
                         return web.json_response({"error": "No active playback"}, status=404)
             except Exception as e:
                 return web.json_response({"error": str(e)}, status=500)
 
-        # Create aiohttp web server
-        app = web.Application()
+        # Create aiohttp web server with CORS middleware
+        @web.middleware
+        async def cors_middleware(request, handler):
+            if request.method == 'OPTIONS':
+                return web.Response(
+                    headers={
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+                        'Access-Control-Allow-Headers': '*'
+                    }
+                )
+            response = await handler(request)
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = '*'
+            return response
+
+        app = web.Application(middlewares=[cors_middleware])
         app.router.add_get('/api/stats', stats_handler)
         app.router.add_get('/api/now-playing', now_playing_handler)
 
