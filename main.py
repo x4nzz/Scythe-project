@@ -3628,6 +3628,10 @@ class VerifyView(View):
         except discord.HTTPException:
             await interaction.response.send_message("An error occurred while verifying you.", ephemeral=True)
 
+
+# ==========================================
+# SCRIPT EXECUTION
+# ==========================================
 @bot.group(name="verify", invoke_without_command=True)
 @commands.has_permissions(manage_roles=True)
 async def verify(ctx: commands.Context):
@@ -3682,46 +3686,6 @@ async def verify_role(ctx: commands.Context, role: discord.Role):
         color=EMBED_COLOR
     )
     await ctx.send(embed=embed)
-
-# ==========================================
-# SCRIPT EXECUTION
-# ==========================================
-@bot.group(name="verify", invoke_without_command=True)
-@commands.has_permissions(manage_roles=True)
-async def verify(ctx: commands.Context):
-    """Verification system setup."""
-    await ctx.send(embed=get_syntax_embed("verify"))
-
-@verify.command(name="setup")
-@commands.has_permissions(manage_roles=True)
-async def verify_setup(ctx: commands.Context):
-    """Set up the verification system in the current channel."""
-    # Get stored roles
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT verified_role_id, unverified_role_id FROM verification WHERE guild_id = ?", (ctx.guild.id,))
-        row = cursor.fetchone()
-
-    verified_role_id = row[0] if row else None
-    unverified_role_id = row[1] if row else None
-
-    verified_role = ctx.guild.get_role(verified_role_id) if verified_role_id else None
-    unverified_role = ctx.guild.get_role(unverified_role_id) if unverified_role_id else None
-
-    # Create embed
-    embed = discord.Embed(
-        title="Verification",
-        description=(
-            "Click the button below to verify yourself and gain access to the server.\n\n"
-            f"Verified Role: {verified_role.mention if verified_role else 'Not set'}\n"
-            f"Unverified Role: {unverified_role.mention if unverified_role else 'Not set'}"
-        ),
-        color=0x2b2d31  # EMBED_COLOR
-    )
-
-    # Create view with button
-    view = VerifyView(verified_role_id, unverified_role_id)
-    await ctx.send(embed=embed, view=view)
 
 # ==========================================
 # SCRIPT EXECUTION
