@@ -12,7 +12,7 @@ export async function GET() {
   }
 
   try {
-    const botUrl = process.env.NEXT_PUBLIC_BOT_URL || 'http://localhost:8080';
+    const botUrl = process.env.NEXT_PUBLIC_BOT_API_URL || process.env.NEXT_PUBLIC_BOT_URL || 'http://localhost:8080';
     const response = await fetch(`${botUrl}/api/stats`);
 
     if (!response.ok) {

@@ -35,7 +35,7 @@ body {
 }
 
 .bg-grid-pattern {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22><path d=%22M0 0 L100 100 M100 0 L0 100%22 stroke=%22%231a1a1a%22 stroke-width=%220.5%22/%22></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22><path d=%22M0 10 L20 10 M10 0 L10 20%22 stroke=%22%230a0a0a%22 stroke-width=%220.1%22/%22></svg>");
   background-size: 20px 20px;
   background-repeat: repeat;
 }

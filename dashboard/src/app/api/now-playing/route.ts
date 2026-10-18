@@ -9,13 +9,13 @@ export async function GET() {
       uri: '',
       artwork: '',
       duration: 0,
-      elapsed: 0,
+      started_at: 0,
       is_playing: false
     });
   }
 
   try {
-    const botUrl = process.env.NEXT_PUBLIC_BOT_URL || 'http://localhost:8080';
+    const botUrl = process.env.NEXT_PUBLIC_BOT_API_URL || process.env.NEXT_PUBLIC_BOT_URL || 'http://localhost:8080';
     const response = await fetch(`${botUrl}/api/now-playing`);
 
     if (!response.ok) {
@@ -33,7 +33,7 @@ export async function GET() {
       uri: '',
       artwork: '',
       duration: 0,
-      elapsed: 0,
+      started_at: 0,
       is_playing: false
     }, { status: 500 });
   }

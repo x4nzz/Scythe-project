@@ -34,8 +34,6 @@ export default function Hero() {
 
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 pt-20 pb-14 bg-black overflow-hidden">
-      {/* Background grid pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22><path d=%22M0 0 L100 100 M100 0 L0 100%22 stroke=%22%231a1a1a%22 stroke-width=%220.5%22/%22></svg>')] opacity-20 pointer-events-none" />
       {/* Blade slash animation on hero - sweeps on mount */}
       <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="mount" />
       {/* Title with slash animation */}
