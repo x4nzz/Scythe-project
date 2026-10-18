@@ -1266,14 +1266,14 @@ class ScythBot(commands.Bot):
         self.add_view(VoiceMasterInterface())
         check_scheduled_nukes.start()
 
-        # Start dashboard
-        self.dashboard_process = await asyncio.create_subprocess_exec(
-            "npm", "run", "dev",
-            cwd=os.path.join(os.path.dirname(__file__), "dashboard"),
-            env={**os.environ, "HOST": os.environ.get("DASHBOARD_HOST", "37.27.141.177"), "PORT": os.environ.get("DASHBOARD_PORT", "25606")},
-            stdout=asyncio.subprocess.DEVNULL,
-            stderr=asyncio.subprocess.DEVNULL,
-        )
+        # Start dashboard - DISABLED for bot-hosting.net (dashboard hosted externally on Vercel)
+        # self.dashboard_process = await asyncio.create_subprocess_exec(
+        #     "npm", "run", "dev",
+        #     cwd=os.path.join(os.path.dirname(__file__), "dashboard"),
+        #     env={**os.environ, "HOST": os.environ.get("DASHBOARD_HOST", "37.27.141.177"), "PORT": os.environ.get("DASHBOARD_PORT", "25606")},
+        #     stdout=asyncio.subprocess.DEVNULL,
+        #     stderr=asyncio.subprocess.DEVNULL,
+        # )
 
         # Connect to active public Lavalink v4 nodes
         nodes = [

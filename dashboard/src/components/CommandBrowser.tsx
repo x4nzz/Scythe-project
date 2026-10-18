@@ -83,13 +83,13 @@ export default function CommandBrowser() {
               const cmd = COMMAND_SYNTAX[name as keyof typeof COMMAND_SYNTAX];
               // Determine category based on command name
               let category = "Other";
-              if ["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(name) {
+              if (["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(name)) {
                 category = "Admin";
-              } else if ["8ball", "joke", "meme"].includes(name) {
+              } else if (["8ball", "joke", "meme"].includes(name)) {
                 category = "Fun";
-              } else if ["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(name) {
+              } else if (["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(name)) {
                 category = "Music";
-              } else if ["prefix"].includes(name) {
+              } else if (["prefix"].includes(name)) {
                 category = "Config";
               }
 
