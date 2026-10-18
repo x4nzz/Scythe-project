@@ -1,6 +1,19 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
+  // If we are in a build phase, return mock data to prevent fetch errors during prerendering
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return NextResponse.json({
+      title: '',
+      artist: '',
+      uri: '',
+      artwork: '',
+      duration: 0,
+      elapsed: 0,
+      is_playing: false
+    });
+  }
+
   try {
     const botUrl = process.env.NEXT_PUBLIC_BOT_URL || 'http://localhost:8080';
     const response = await fetch(`${botUrl}/api/now-playing`);

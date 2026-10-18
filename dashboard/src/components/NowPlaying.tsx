@@ -4,15 +4,16 @@ import { useState, useEffect } from "react";
 import { BladeSlash } from "@/components/BladeSlash";
 
 export default function NowPlaying() {
-  const [data, setData] = useState({
-    title: "",
-    artist: "",
-    uri: "",
-    artwork: "",
-    duration: 0,
-    elapsed: 0,
-    is_playing: false
-  });
+  const [data, setData] = useState<{
+    title: string;
+    artist: string;
+    uri: string;
+    artwork: string;
+    duration: number;
+    elapsed: number;
+    is_playing: boolean;
+    guild_name: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchNowPlaying = async () => {
@@ -21,9 +22,12 @@ export default function NowPlaying() {
         if (res.ok) {
           const nowPlayingData = await res.json();
           setData(nowPlayingData);
+        } else {
+          setData(null);
         }
       } catch (e) {
         console.error("Failed to fetch now playing:", e);
+        setData(null);
       }
     };
 
@@ -38,21 +42,19 @@ export default function NowPlaying() {
     return () => clearInterval(interval);
   }, []);
 
+  if (!data || !data.is_playing || !data.title) {
+    return null;
+  }
+
   // Format duration from seconds to mm:ss
-  const formatDuration = (seconds: number) => {
+  const formatTime = (seconds: number) => {
     if (!seconds) return "0:00";
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  // Format elapsed time similarly
-  const formatElapsed = (seconds: number) => {
-    if (!seconds) return "0:00";
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
+  const progressPercent = data.duration > 0 ? (data.elapsed / data.duration) * 100 : 0;
 
   return (
     <div className="relative flex items-center gap-4 bg-dark-2 border border-dark-3 rounded-none px-4 py-3 hover:border-silver/50 transition-all duration-300">
@@ -63,30 +65,38 @@ export default function NowPlaying() {
           <img
             src={data.artwork}
             alt="Album Art"
-            className="w-12 h-12 object-cover rounded-none"
+            className="w-14 h-14 object-cover rounded-none"
           />
         ) : (
-          <div className="w-12 h-12 bg-dark-1 flex items-center justify-center rounded-none">
+          <div className="w-14 h-14 bg-dark-1 flex items-center justify-center rounded-none">
             <div className="text-silver text-xs">🎵</div>
           </div>
         )}
       </div>
-      <div className="flex-1 space-y-1">
-        {data.title && (
-          <p className="text-sm font-medium text-white">
-            <a href={data.uri} target="_blank" rel="noopener noreferrer" className="underline">
-              {data.title}
-            </a>
-          </p>
-        )}
+      <div className="flex-1 space-y-2">
         <p className="text-xs text-dark-silver">
-          {data.artist} • {formatElapsed(data.elapsed)} / {formatDuration(data.duration)}
+          Playing in {data.guild_name}
         </p>
+        <div className="flex items-center gap-2">
+          <a
+            href={data.uri}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-white underline hover:no-underline"
+          >
+            {data.title}
+          </a>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-dark-silver">
+          <p className="flex-shrink-0">{formatTime(data.elapsed)}</p>
+          <div className="flex-1 h-1 bg-dark-3 rounded">
+            <div
+              className={`h-full bg-silver rounded transition-all duration-200 w-[${progressPercent}%]`}
+            ></div>
+          </div>
+          <p className="flex-shrink-0">{formatTime(data.duration)}</p>
+        </div>
       </div>
-      {/* Play/pause indicator? Maybe just a simple dot */}
-      {data.is_playing && (
-        <div className="w-2 h-2 bg-silver rounded-full animate-pulse" />
-      )}
     </div>
   );
 }

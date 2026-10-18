@@ -86,14 +86,24 @@ export default function CommandBrowser() {
                 className="relative flex w-full items-start gap-4 bg-dark-2 border border-dark-3 rounded-none hover:border-silver/50 transition-all duration-300"
               >
                 <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
-                <div className="relative z-10 flex flex-col items-start gap-2 text-left w-full">
-                  <span className="flex-shrink-0 font-mono text-silver">{`;${cmd.name}`}</span>
-                  <div className="flex-1 space-y-2">
-                    <p className="text-sm font-medium text-white">{cmd.desc}</p>
-                    {cmd.aliases && cmd.aliases.length > 0 && (
-                      <span className="text-xs text-dark-silver">{cmd.aliases.join(', ')}</span>
-                    )}
-                    <span className="text-xs text-dark-silver">{cmd.usage?.[0] || ''}</span>
+                <div className="relative z-10 flex flex-col items-start gap-3 text-left w-full">
+                  <div className="flex items-start gap-3">
+                    <span className="flex-shrink-0 font-mono text-silver">{`;${cmd.name}`}</span>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium text-white">{cmd.desc}</p>
+                      {cmd.aliases && cmd.aliases.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {cmd.aliases.map((alias) => (
+                            <span key={alias} className="text-xs text-dark-silver bg-dark-1/30 px-2 py-0.5 rounded-none">
+                              {alias}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <span className="text-xs text-dark-silver font-mono">
+                        {cmd.usage?.[0] ?? ""}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

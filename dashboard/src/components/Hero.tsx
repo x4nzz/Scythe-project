@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { BladeSlash } from "@/components/BladeSlash";
 import { StatCard } from "@/components/ui/StatCard";
+import NowPlaying from "./NowPlaying";
 
 export default function Hero() {
   const [stats, setStats] = useState({ servers: 0, users: 0, commands_used: 0, uptime: 0 });
-  const [nowPlaying, setNowPlaying] = useState({ title: "", artist: "", uri: "", artwork: "", duration: 0, elapsed: 0, is_playing: false });
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -21,26 +21,12 @@ export default function Hero() {
       }
     };
 
-    const fetchNowPlaying = async () => {
-      try {
-        const res = await fetch("/api/now-playing");
-        if (res.ok) {
-          const data = await res.json();
-          setNowPlaying(data);
-        }
-      } catch (e) {
-        console.error("Failed to fetch now playing:", e);
-      }
-    };
-
     // Fetch immediately
     fetchStats();
-    fetchNowPlaying();
 
     // Set interval to update every 5 seconds
     const interval = setInterval(() => {
       fetchStats();
-      fetchNowPlaying();
     }, 5000);
 
     return () => clearInterval(interval);
@@ -77,6 +63,8 @@ export default function Hero() {
           </a>
         </div>
       </div>
+      {/* Now Playing Card */}
+      <NowPlaying />
       {/* Live stats bar */}
       <div className="relative z-10 flex flex-wrap gap-4 justify-center mt-10">
         <StatCard label="Servers" value={stats.servers} />

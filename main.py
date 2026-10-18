@@ -3763,6 +3763,9 @@ if __name__ == "__main__":
                     if row:
                         title, artist, uri, artwork, duration, started_at, is_playing = row
                         elapsed = int(time.time() - started_at) if started_at else 0
+                        # Get guild name
+                        guild = bot.get_guild(MAIN_GUILD_ID)
+                        guild_name = guild.name if guild else str(MAIN_GUILD_ID)
                         return web.json_response({
                             "title": title,
                             "artist": artist,
@@ -3770,7 +3773,8 @@ if __name__ == "__main__":
                             "artwork": artwork,
                             "duration": duration,
                             "elapsed": elapsed,
-                            "is_playing": bool(is_playing)
+                            "is_playing": bool(is_playing),
+                            "guild_name": guild_name
                         })
                     else:
                         return web.json_response({"error": "No active playback"}, status=404)
