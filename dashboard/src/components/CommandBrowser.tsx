@@ -30,10 +30,10 @@ export default function CommandBrowser() {
       // Filter by category (simplified mapping)
       const categoryMatch =
         selectedCategory === "All" ||
-        (selectedCategory === "Admin" && ["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(name)) ||
-        (selectedCategory === "Fun" && ["8ball", "joke", "meme"].includes(name)) ||
-        (selectedCategory === "Music" && ["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(name)) ||
-        (selectedCategory === "Config" && ["prefix"].includes(name));
+        (selectedCategory === "Admin" && ["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(cmd.name)) ||
+        (selectedCategory === "Fun" && ["8ball", "joke", "meme"].includes(cmd.name)) ||
+        (selectedCategory === "Music" && ["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(cmd.name)) ||
+        (selectedCategory === "Config" && ["prefix"].includes(cmd.name));
 
       if (!categoryMatch) return false;
 
@@ -41,13 +41,13 @@ export default function CommandBrowser() {
       if (search) {
         const lowerSearch = search.toLowerCase();
         return (
-          name.toLowerCase().includes(lowerSearch) ||
+          cmd.name.toLowerCase().includes(lowerSearch) ||
           cmd.desc.toLowerCase().includes(lowerSearch)
         );
       }
       return true;
     })
-    .sort((a, b) => a.localeCompare(b));
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <section className="py-16 bg-black">
