@@ -3280,7 +3280,7 @@ async def boosterrole_award_view(ctx: commands.Context):
     await ctx.send(embed=embed)
 
 @boosterrole.group(name="filter", invoke_without_command=True)
-@commands.has_permissions(manage_roles=ManageRole)
+@commands.has_permissions(manage_roles=True)
 async def boosterrole_filter(ctx: commands.Context, role: discord.Role = None):
     """Set a filter role required to be eligible for the booster role award."""
     if role is None:
@@ -3295,7 +3295,7 @@ async def boosterrole_filter(ctx: commands.Context, role: discord.Role = None):
     await ctx.send(embed=embed)
 
 @boosterrole_filter.command(name="remove")
-@commands.has_permissions(manage_roles=ManageRole)
+@commands.has_permissions(manage_roles=True)
 async def boosterrole_filter_remove(ctx: commands.Context):
     """Remove the filter role for the booster role award."""
     settings = get_booster_role_settings(ctx.guild.id)
