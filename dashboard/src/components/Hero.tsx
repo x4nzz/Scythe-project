@@ -12,7 +12,7 @@ export default function Hero() {
       <div className="relative z-10 text-center">
         {/* Blade slash on hover over title */}
         <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
-        <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl text-white tracking-tighter">
+        <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-white tracking-tighter">
           SCYTH
         </h1>
         <p className="mt-4 text-lg md:text-xl text-dark-silver max-w-md font-mono">
@@ -27,7 +27,7 @@ export default function Hero() {
           </a>
           <a
             href="/commands"
-            className="flex h-12 px-6 items-center justify-center gap-2 rounded-none border border-silver/50 bg-transparent text-white font-medium hover:bg-dark-1/50 transition-all duration-300"
+            className="flex h-12 px-6 items-center justify-center gap-2 rounded-none border border-dark-3/50 bg-transparent text-white font-medium hover:bg-dark-1/50 transition-all duration-300"
           >
             Commands
           </a>
@@ -35,10 +35,10 @@ export default function Hero() {
       </div>
       {/* Live stats bar */}
       <div className="relative z-10 flex flex-wrap gap-4 justify-center mt-10">
-        <StatCard label="Servers" value="1,234" />
-        <StatCard label="Users" value="12,345" />
-        <StatCard label="Commands Used" value="54,321" />
-        <StatCard label="Uptime" value="99.9%" />
+        <StatCard label="Servers" value="--" />
+        <StatCard label="Users" value="--" />
+        <StatCard label="Commands Used" value="--" />
+        <StatCard label="Uptime" value="--" />
       </div>
     </section>
   );

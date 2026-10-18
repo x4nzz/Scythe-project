@@ -39,23 +39,29 @@ export default function FeatureGrid() {
   return (
     <section className="py-16 bg-black">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-center text-3xl font-bold text-white mb-12">
+        <h2 className="text-center text-3xl font-display text-white mb-12">
           Features
         </h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <div
-              key={feature.name}
-              className="relative flex h-[180px] w-full items-center justify-center px-4 py-6 bg-dark-2 border border-dark-3 hover:border-silver/50 transition-all duration-300"
-            >
-              <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
-              <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-                <feature.icon className="h-8 w-8 text-silver transition-colors duration-300" />
-                <h3 className="text-lg font-semibold text-white">{feature.name}</h3>
-                <p className="text-sm text-dark-silver">{feature.description}</p>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {features.map((feature, index) => {
+            const colSpan = index === 0 ? 'lg:col-span-2' : index === 4 ? 'lg:col-span-3' : index === 3 ? 'lg:col-span-2' : 'lg:col-span-1';
+            return (
+              <div
+                key={feature.name}
+                className={[
+                  'relative flex h-[180px] w-full items-center justify-center px-4 py-6 bg-dark-2 border border-dark-3 hover:border-silver/50 transition-all duration-300',
+                  colSpan
+                ].join(' ')}
+              >
+                <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
+                <div className="relative z-10 flex flex-col items-center gap-4 text-center">
+                  <feature.icon className="h-8 w-8 text-silver transition-colors duration-300" />
+                  <h3 className="text-lg font-semibold text-white">{feature.name}</h3>
+                  <p className="text-sm text-dark-silver">{feature.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

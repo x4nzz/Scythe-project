@@ -23,6 +23,10 @@ module.exports = {
       },
       animation: {
         'blade-slash': 'blade-slash 0.6s ease-out'
+      },
+      fontFamily: {
+        display: ['Orbitron', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
       }
     },
   },

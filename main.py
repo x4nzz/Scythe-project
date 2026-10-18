@@ -3586,7 +3586,7 @@ class VerifyView(View):
         self.verified_role_id = verified_role_id
         self.unverified_role_id = unverified_role_id
 
-    @discord.ui.button(label="Verify", style=discord.ButtonStyle.grey, emoji="✅", custom_id="scythe:verify_button")
+    @discord.ui.button(label="Verify", style=discord.ButtonStyle.grey, emoji=discord.PartialEmoji.from_str(EMOJI_CHECKMARK), custom_id="scythe:verify_button")
     async def verify_button(self, interaction: discord.Interaction, button: Button):
         guild = interaction.guild
         member = interaction.user

@@ -6,7 +6,7 @@ import { BladeSlash } from "@/components/BladeSlash";
 
 export default function CommandBrowser() {
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("Admin");
 
   // Convert COMMAND_SYNTAX to array format for easier filtering
   const commandsData = Object.entries(COMMAND_SYNTAX).map(([name, data]) => ({
@@ -23,13 +23,12 @@ export default function CommandBrowser() {
   ];
 
   // For better category mapping, let's use predefined categories based on main.py
-  const predefinedCategories = ["All", "Admin", "Fun", "Music", "Config"];
+  const predefinedCategories = ["Admin", "Fun", "Music", "Config"];
 
   const filteredCommands = commandsData
     .filter((cmd) => {
       // Filter by category (simplified mapping)
       const categoryMatch =
-        selectedCategory === "All" ||
         (selectedCategory === "Admin" && ["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(cmd.name)) ||
         (selectedCategory === "Fun" && ["8ball", "joke", "meme"].includes(cmd.name)) ||
         (selectedCategory === "Music" && ["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(cmd.name)) ||
@@ -52,7 +51,7 @@ export default function CommandBrowser() {
   return (
     <section className="py-16 bg-black">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-center text-3xl font-bold text-white mb-12">
+        <h2 className="text-center text-3xl font-display text-white mb-12">
           Command Browser
         </h2>
         <div className="mb-6">
@@ -82,18 +81,7 @@ export default function CommandBrowser() {
         <div className="space-y-4">
           {filteredCommands.length > 0 ? (
             filteredCommands.map((name) => {
-              const cmd = COMMAND_SYNTAX[name as keyof typeof COMMAND_SYNTAX];
-              // Determine category based on command name
-              let category = "Other";
-              if (["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(name)) {
-                category = "Admin";
-              } else if (["8ball", "joke", "meme"].includes(name)) {
-                category = "Fun";
-              } else if (["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(name)) {
-                category = "Music";
-              } else if (["prefix"].includes(name)) {
-                category = "Config";
-              }
+              const cmd = COMMAND_SYNTAX[name];
 
               return (
                 <div
@@ -105,7 +93,7 @@ export default function CommandBrowser() {
                     <span className="flex-shrink-0 font-mono text-silver">{`;${name}`}</span>
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium text-white">{cmd?.desc || "No description available"}</p>
-                      <span className="text-xs text-dark-silver">{category}</span>
+                      <span className="text-xs text-dark-silver">{cmd && cmd.usage ? cmd.usage[0] : ''}</span>
                     </div>
                   </div>
                 </div>
