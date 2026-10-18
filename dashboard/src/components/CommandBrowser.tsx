@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { COMMAND_SYNTAX } from "@/lib/commands";
 import { BladeSlash } from "@/components/BladeSlash";
