@@ -785,6 +785,13 @@ def init_db():
                 PRIMARY KEY (guild_id, user_id)
             )
         """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS verification (
+                guild_id INTEGER PRIMARY KEY,
+                verified_role_id INTEGER,
+                unverified_role_id INTEGER
+            )
+        """)
         conn.commit()
 
 def log_mod_action(guild_id: int, action: str, target_id: int, moderator_id: int, reason: str):
@@ -3567,6 +3574,172 @@ async def on_command_error(ctx: commands.Context, error: Exception):
         return await ctx.send(embed=embed)
 
     print(f"Unhandled Exception in command {ctx.command}: {error}")
+
+# ==========================================
+# VERIFICATION SYSTEM
+# ==========================================
+class VerifyView(View):
+    def __init__(self, verified_role_id: Optional[int], unverified_role_id: Optional[int]):
+        super().__init__(timeout=None)
+        self.verified_role_id = verified_role_id
+        self.unverified_role_id = unverified_role_id
+
+    @discord.ui.button(label="Verify", style=discord.ButtonStyle.green, emoji="✅")
+    async def verify_button(self, interaction: discord.Interaction, button: Button):
+        guild = interaction.guild
+        member = interaction.user
+
+        if not guild or not member:
+            await interaction.response.send_message("An error occurred.", ephemeral=True)
+            return
+
+        # Get stored roles
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT verified_role_id, unverified_role_id FROM verification WHERE guild_id = ?", (guild.id,))
+            row = cursor.fetchone()
+
+        if not row:
+            await interaction.response.send_message("Verification not set up. Please contact an administrator.", ephemeral=True)
+            return
+
+        verified_role_id, unverified_role_id = row
+        verified_role = guild.get_role(verified_role_id) if verified_role_id else None
+        unverified_role = guild.get_role(unverified_role_id) if unverified_role_id else None
+
+        if not verified_role:
+            await interaction.response.send_message("Verified role not configured. Please contact an administrator.", ephemeral=True)
+            return
+
+        try:
+            # Give verified role
+            await member.add_roles(verified_role, reason="Verification system")
+
+            # Remove unverified role if it exists and is configured
+            if unverified_role_id and unverified_role:
+                try:
+                    await member.remove_roles(unverified_role, reason="Verification system")
+                except discord.Forbidden:
+                    pass  # Ignore if we can't remove the unverified role
+
+            await interaction.response.send_message(f"{EMOJI_CHECKMARK} You have been verified!", ephemeral=True)
+        except discord.Forbidden:
+            await interaction.response.send_message("I lack permissions to assign roles.", ephemeral=True)
+        except discord.HTTPException:
+            await interaction.response.send_message("An error occurred while verifying you.", ephemeral=True)
+
+@bot.group(name="verify", invoke_without_command=True)
+@commands.has_permissions(manage_roles=True)
+async def verify(ctx: commands.Context):
+    """Verification system setup."""
+    await ctx.send(embed=get_syntax_embed("verify"))
+
+@verify.command(name="setup")
+@commands.has_permissions(manage_roles=True)
+async def verify_setup(ctx: commands.Context):
+    """Set up the verification system in the current channel."""
+    # Get stored roles
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT verified_role_id, unverified_role_id FROM verification WHERE guild_id = ?", (ctx.guild.id,))
+        row = cursor.fetchone()
+
+    verified_role_id = row[0] if row else None
+    unverified_role_id = row[1] if row else None
+
+    verified_role = ctx.guild.get_role(verified_role_id) if verified_role_id else None
+    unverified_role = ctx.guild.get_role(unverified_role_id) if unverified_role_id else None
+
+    # Create embed
+    embed = discord.Embed(
+        title="Verification",
+        description=(
+            "Click the button below to verify yourself and gain access to the server.\n\n"
+            f"Verified Role: {verified_role.mention if verified_role else 'Not set'}\n"
+            f"Unverified Role: {unverified_role.mention if unverified_role else 'Not set'}"
+        ),
+        color=0x2b2d31  # EMBED_COLOR
+    )
+
+    # Create view with button
+    view = VerifyView(verified_role_id, unverified_role_id)
+    await ctx.send(embed=embed, view=view)
+
+@verify.command(name="role")
+@commands.has_permissions(manage_roles=True)
+async def verify_role(ctx: commands.Context, role: discord.Role):
+    """Set the role to give on verification."""
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT OR REPLACE INTO verification (guild_id, verified_role_id, unverified_role_id)
+            VALUES (?, ?, COALESCE((SELECT unverified_role_id FROM verification WHERE guild_id = ?), NULL))
+        """, (ctx.guild.id, role.id, ctx.guild.id))
+        conn.commit()
+
+    embed = discord.Embed(
+        description=f"{EMOJI_CHECKMARK} Verified role set to {role.mention}",
+        color=EMBED_COLOR
+    )
+    await ctx.send(embed=embed)
+
+# ==========================================
+# SCRIPT EXECUTION
+# ==========================================
+@bot.group(name="verify", invoke_without_command=True)
+@commands.has_permissions(manage_roles=True)
+async def verify(ctx: commands.Context):
+    """Verification system setup."""
+    await ctx.send(embed=get_syntax_embed("verify"))
+
+@verify.command(name="setup")
+@commands.has_permissions(manage_roles=True)
+async def verify_setup(ctx: commands.Context):
+    """Set up the verification system in the current channel."""
+    # Get stored roles
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT verified_role_id, unverified_role_id FROM verification WHERE guild_id = ?", (ctx.guild.id,))
+        row = cursor.fetchone()
+
+    verified_role_id = row[0] if row else None
+    unverified_role_id = row[1] if row else None
+
+    verified_role = ctx.guild.get_role(verified_role_id) if verified_role_id else None
+    unverified_role = ctx.guild.get_role(unverified_role_id) if unverified_role_id else None
+
+    # Create embed
+    embed = discord.Embed(
+        title="Verification",
+        description=(
+            "Click the button below to verify yourself and gain access to the server.\n\n"
+            f"Verified Role: {verified_role.mention if verified_role else 'Not set'}\n"
+            f"Unverified Role: {unverified_role.mention if unverified_role else 'Not set'}"
+        ),
+        color=0x2b2d31  # EMBED_COLOR
+    )
+
+    # Create view with button
+    view = VerifyView(verified_role_id, unverified_role_id)
+    await ctx.send(embed=embed, view=view)
+
+@verify.command(name="role")
+@commands.has_permissions(manage_roles=True)
+async def verify_role(ctx: commands.Context, role: discord.Role):
+    """Set the role to give on verification."""
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT OR REPLACE INTO verification (guild_id, verified_role_id, unverified_role_id)
+            VALUES (?, ?, COALESCE((SELECT unverified_role_id FROM verification WHERE guild_id = ?), NULL))
+        """, (ctx.guild.id, role.id, ctx.guild.id))
+        conn.commit()
+
+    embed = discord.Embed(
+        description=f"{EMOJI_CHECKMARK} Verified role set to {role.mention}",
+        color=EMBED_COLOR
+    )
+    await ctx.send(embed=embed)
 
 # ==========================================
 # SCRIPT EXECUTION
