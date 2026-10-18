@@ -80,25 +80,24 @@ export default function CommandBrowser() {
         </div>
         <div className="space-y-4">
           {filteredCommands.length > 0 ? (
-            filteredCommands.map((name) => {
-              const cmd = COMMAND_SYNTAX[name];
-
-              return (
-                <div
-                  key={name}
-                  className="relative flex w-full items-start gap-4 bg-dark-2 border border-dark-3 rounded-none hover:border-silver/50 transition-all duration-300"
-                >
-                  <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
-                  <div className="relative z-10 flex flex-col items-start gap-2 text-left w-full">
-                    <span className="flex-shrink-0 font-mono text-silver">{`;${name}`}</span>
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium text-white">{cmd?.desc || "No description available"}</p>
-                      <span className="text-xs text-dark-silver">{cmd && cmd.usage ? cmd.usage[0] : ''}</span>
-                    </div>
+            filteredCommands.map((cmd) => (
+              <div
+                key={cmd.name}
+                className="relative flex w-full items-start gap-4 bg-dark-2 border border-dark-3 rounded-none hover:border-silver/50 transition-all duration-300"
+              >
+                <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
+                <div className="relative z-10 flex flex-col items-start gap-2 text-left w-full">
+                  <span className="flex-shrink-0 font-mono text-silver">{`;${cmd.name}`}</span>
+                  <div className="flex-1 space-y-2">
+                    <p className="text-sm font-medium text-white">{cmd.desc}</p>
+                    {cmd.aliases && cmd.aliases.length > 0 && (
+                      <span className="text-xs text-dark-silver">{cmd.aliases.join(', ')}</span>
+                    )}
+                    <span className="text-xs text-dark-silver">{cmd.usage?.[0] || ''}</span>
                   </div>
                 </div>
-              );
-            })
+              </div>
+            ))
           ) : (
             <p className="text-center text-dark-silver py-8">No commands found.</p>
           )}

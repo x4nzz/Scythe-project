@@ -16,6 +16,7 @@ from discord.ext import commands, tasks
 from discord.ui import View, Button, Modal, TextInput, Select
 import yt_dlp
 import wavelink
+from aiohttp import web
 
 # ==========================================
 # CONFIGURATION & CONSTANTS
@@ -1259,6 +1260,16 @@ class ScythBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="!", intents=discord.Intents.all(), help_command=None)
         self.dashboard_process = None
+        self.commands_used = 0
+        self.start_time = None
+        self.before_invoke(self.increment_commands_used)
+
+    def increment_commands_used(self, ctx):
+        self.commands_used += 1
+
+    async def on_ready(self):
+        if self.start_time is None:
+            self.start_time = time.time()
 
     async def setup_hook(self):
         init_db()
@@ -3721,4 +3732,71 @@ if __name__ == "__main__":
     if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE" or not BOT_TOKEN:
         print("Please set the DISCORD_TOKEN environment variable or replace YOUR_BOT_TOKEN_HERE.")
     else:
-        bot.run(BOT_TOKEN)
+        # Handler functions
+        async def stats_handler(request):
+            if bot.start_time is None:
+                uptime_pct = 0
+            else:
+                uptime_pct = 100.0
+
+            total_users = sum(guild.approximate_member_count for guild in bot.guilds) if bot.guilds else 0
+
+            return web.json_response({
+                "servers": len(bot.guilds),
+                "users": total_users,
+                "commands_used": bot.commands_used,
+                "uptime": uptime_pct
+            })
+
+        async def now_playing_handler(request):
+            if bot.start_time is None:
+                return web.json_response({"error": "Bot not ready"}, status=503)
+            try:
+                with sqlite3.connect(DB_NAME) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("""
+                        SELECT title, artist, uri, artwork, duration, started_at, is_playing
+                        FROM active_playback
+                        WHERE guild_id = ?
+                    """, (MAIN_GUILD_ID,))
+                    row = cursor.fetchone()
+                    if row:
+                        title, artist, uri, artwork, duration, started_at, is_playing = row
+                        elapsed = int(time.time() - started_at) if started_at else 0
+                        return web.json_response({
+                            "title": title,
+                            "artist": artist,
+                            "uri": uri,
+                            "artwork": artwork,
+                            "duration": duration,
+                            "elapsed": elapsed,
+                            "is_playing": bool(is_playing)
+                        })
+                    else:
+                        return web.json_response({"error": "No active playback"}, status=404)
+            except Exception as e:
+                return web.json_response({"error": str(e)}, status=500)
+
+        # Create aiohttp web server
+        app = web.Application()
+        app.router.add_get('/api/stats', stats_handler)
+        app.router.add_get('/api/now-playing', now_playing_handler)
+
+        async def main():
+            # Set up web server
+            runner = web.AppRunner(app)
+            await runner.setup()
+            site = web.TCPSite(runner, '0.0.0.0', 8080)
+            await site.start()
+            print(f"Web server started on http://0.0.0.0:8080")
+            # Start the bot
+            await bot.start(BOT_TOKEN)
+            # If we get here, the bot has stopped
+            await runner.cleanup()
+
+        try:
+            asyncio.run(main())
+        except KeyboardInterrupt:
+            print("Bot stopped by user.")
+        except Exception as e:
+            print(f"An error occurred: {e}")

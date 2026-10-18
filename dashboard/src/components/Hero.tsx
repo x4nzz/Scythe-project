@@ -1,7 +1,51 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { BladeSlash } from "@/components/BladeSlash";
 import { StatCard } from "@/components/ui/StatCard";
 
 export default function Hero() {
+  const [stats, setStats] = useState({ servers: 0, users: 0, commands_used: 0, uptime: 0 });
+  const [nowPlaying, setNowPlaying] = useState({ title: "", artist: "", uri: "", artwork: "", duration: 0, elapsed: 0, is_playing: false });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/stats");
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch (e) {
+        console.error("Failed to fetch stats:", e);
+      }
+    };
+
+    const fetchNowPlaying = async () => {
+      try {
+        const res = await fetch("/api/now-playing");
+        if (res.ok) {
+          const data = await res.json();
+          setNowPlaying(data);
+        }
+      } catch (e) {
+        console.error("Failed to fetch now playing:", e);
+      }
+    };
+
+    // Fetch immediately
+    fetchStats();
+    fetchNowPlaying();
+
+    // Set interval to update every 5 seconds
+    const interval = setInterval(() => {
+      fetchStats();
+      fetchNowPlaying();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 pt-20 pb-14 bg-black overflow-hidden">
       {/* Background grid pattern */}
@@ -35,10 +79,10 @@ export default function Hero() {
       </div>
       {/* Live stats bar */}
       <div className="relative z-10 flex flex-wrap gap-4 justify-center mt-10">
-        <StatCard label="Servers" value="--" />
-        <StatCard label="Users" value="--" />
-        <StatCard label="Commands Used" value="--" />
-        <StatCard label="Uptime" value="--" />
+        <StatCard label="Servers" value={stats.servers} />
+        <StatCard label="Users" value={stats.users} />
+        <StatCard label="Commands Used" value={stats.commands_used} />
+        <StatCard label="Uptime" value={`${stats.uptime.toFixed(1)}%`} />
       </div>
     </section>
   );
