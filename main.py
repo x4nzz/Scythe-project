@@ -1251,6 +1251,7 @@ class VoiceMasterInterface(View):
 class ScythBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="!", intents=discord.Intents.all(), help_command=None)
+        self.dashboard_process = None
 
     async def setup_hook(self):
         init_db()
@@ -1259,7 +1260,7 @@ class ScythBot(commands.Bot):
         check_scheduled_nukes.start()
 
         # Start dashboard
-        asyncio.create_subprocess_exec(
+        self.dashboard_process = await asyncio.create_subprocess_exec(
             "npm", "run", "dev",
             cwd=os.path.join(os.path.dirname(__file__), "dashboard"),
             env={**os.environ, "HOST": os.environ.get("DASHBOARD_HOST", "37.27.141.177"), "PORT": os.environ.get("DASHBOARD_PORT", "25606")},
