@@ -92,17 +92,13 @@ export default function CommandBrowser() {
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium text-white">{cmd.desc}</p>
                       {cmd.aliases && cmd.aliases.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {cmd.aliases.map((alias) => (
-                            <span key={alias} className="text-xs text-dark-silver bg-dark-1/30 px-2 py-0.5 rounded-none">
-                              {alias}
-                            </span>
-                          ))}
-                        </div>
+                        <p className="text-xs font-mono text-dark-silver">
+                          {cmd.aliases.join(', ')}
+                        </p>
                       )}
-                      <span className="text-xs text-dark-silver font-mono">
+                      <p className="text-xs font-mono text-dark-silver">
                         {cmd.usage?.[0] ?? ""}
-                      </span>
+                      </p>
                     </div>
                   </div>
                 </div>

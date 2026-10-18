@@ -57,7 +57,7 @@ export default function NowPlaying() {
   const progressPercent = data.duration > 0 ? (data.elapsed / data.duration) * 100 : 0;
 
   return (
-    <div className="relative flex items-center gap-4 bg-dark-2 border border-dark-3 rounded-none px-4 py-3 hover:border-silver/50 transition-all duration-300">
+    <div className="relative flex items-center gap-4 bg-dark-2 border border-dark-3 rounded-lg px-4 py-3 hover:border-silver/50 transition-all duration-300">
       <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
       <div className="relative z-10 flex-shrink-0">
         {/* Album art */}
@@ -87,6 +87,7 @@ export default function NowPlaying() {
             {data.title}
           </a>
         </div>
+        <p className="text-xs text-dark-silver">{data.artist}</p>
         <div className="flex items-center gap-2 text-xs text-dark-silver">
           <p className="flex-shrink-0">{formatTime(data.elapsed)}</p>
           <div className="flex-1 h-1 bg-dark-3 rounded">

@@ -1264,7 +1264,7 @@ class ScythBot(commands.Bot):
         self.start_time = None
         self.before_invoke(self.increment_commands_used)
 
-    def increment_commands_used(self, ctx):
+    async def increment_commands_used(self, ctx):
         self.commands_used += 1
 
     async def on_ready(self):
