@@ -774,7 +774,7 @@ def init_db():
                 name TEXT,
                 icon TEXT,
                 mentionable BOOLEAN,
-                limit INTEGER,
+                "limit" INTEGER,
                 filter_role_id INTEGER
             )
         """)
@@ -953,7 +953,7 @@ def has_permission_or_fake(discord_perm: str = None):
 def get_booster_role_settings(guild_id: int):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT role_id, color, name, icon, mentionable, limit, filter_role_id FROM booster_role_settings WHERE guild_id = ?", (guild_id,))
+        cursor.execute("SELECT role_id, color, name, icon, mentionable, \"limit\", filter_role_id FROM booster_role_settings WHERE guild_id = ?", (guild_id,))
         row = cursor.fetchone()
         if row:
             return row

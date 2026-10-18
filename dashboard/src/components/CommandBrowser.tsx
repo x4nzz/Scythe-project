@@ -1,42 +1,51 @@
 import { useState } from "react";
-
-const commandsData = [
-  { category: "Admin", name: ";ban", description: "Ban a member from the server." },
-  { category: "Admin", name: ";kick", description: "Kick a member from the server." },
-  { category: "Admin", name: ";mute", description: "Mute a member in the server." },
-  { category: "Admin", name: ";unmute", description: "Unmute a member in the server." },
-  { category: "Admin", name: ";warn", description: "Warn a member." },
-  { category: "Fun", name: ";8ball", description: "Ask the magic 8-ball a question." },
-  { category: "Fun", name: ";joke", description: "Tell a random joke." },
-  { category: "Fun", name: ";meme", description: "Fetch a random meme." },
-  { category: "Music", name: ";play", description: "Play a song from YouTube or Spotify." },
-  { category: "Music", name: ";skip", description: "Skip the current song." },
-  { category: "Music", name: ";queue", description: "View the current queue." },
-  { category: "Music", name: ";stop", description: "Stop the music and clear the queue." },
-  { category: "Config", name: ";prefix", description: "Change the bot's prefix." },
-  { category: "Config", name: ";setlog", description: "Set the logging channel." },
-  { category: "Config", name: ";setwelcome", description: "Set the welcome message." },
-];
+import { COMMAND_SYNTAX } from "@/lib/commands";
+import { BladeSlash } from "@/components/BladeSlash";
 
 export default function CommandBrowser() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = ["All", ...new Set(commandsData.map((cmd) => cmd.category))];
+  // Convert COMMAND_SYNTAX to array format for easier filtering
+  const commandsData = Object.entries(COMMAND_SYNTAX).map(([name, data]) => ({
+    name,
+    ...data,
+  }));
+
+  // Extract categories from command data
+  const categories = [
+    "All",
+    ...Array.from(new Set(commandsData.map((cmd) =>
+      cmd.desc.split(" ")[0] // Extract first word as category approximation
+    ))).filter(Boolean)
+  ];
+
+  // For better category mapping, let's use predefined categories based on main.py
+  const predefinedCategories = ["All", "Admin", "Fun", "Music", "Config"];
 
   const filteredCommands = commandsData
     .filter((cmd) => {
-      if (selectedCategory !== "All" && cmd.category !== selectedCategory) return false;
+      // Filter by category (simplified mapping)
+      const categoryMatch =
+        selectedCategory === "All" ||
+        (selectedCategory === "Admin" && ["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(name)) ||
+        (selectedCategory === "Fun" && ["8ball", "joke", "meme"].includes(name)) ||
+        (selectedCategory === "Music" && ["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(name)) ||
+        (selectedCategory === "Config" && ["prefix"].includes(name));
+
+      if (!categoryMatch) return false;
+
+      // Filter by search
       if (search) {
         const lowerSearch = search.toLowerCase();
         return (
-          cmd.name.toLowerCase().includes(lowerSearch) ||
-          cmd.description.toLowerCase().includes(lowerSearch)
+          name.toLowerCase().includes(lowerSearch) ||
+          cmd.desc.toLowerCase().includes(lowerSearch)
         );
       }
       return true;
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.localeCompare(b));
 
   return (
     <section className="py-16 bg-black">
@@ -44,25 +53,25 @@ export default function CommandBrowser() {
         <h2 className="text-center text-3xl font-bold text-white mb-12">
           Command Browser
         </h2>
-        <div className="mb-8">
+        <div className="mb-6">
           <input
             type="text"
             placeholder="Search commands..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2 bg-gray-900/50 border border-gray-800/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 backdrop-blur-sm"
+            className="w-full px-4 py-3 bg-dark-1 border border-dark-2 rounded-none text-white placeholder-dark-silver focus-2 focus:border-silver/50 focus:ring-silver/50"
           />
         </div>
         <div className="mb-6 flex flex-wrap gap-2">
-          {categories.map((category) => (
+          {predefinedCategories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 bg-gray-900/50 border border-gray-800/50 rounded-lg text-sm font-medium ${
+              className={`px-4 py-3 bg-dark-2 border border-dark-3 rounded-none text-sm font-medium ${
                 selectedCategory === category
-                  ? "text-white border-white/20"
-                  : "text-gray-300 hover:bg-gray-800/50 hover:text-white"
-              } transition-colors`}
+                  ? "text-white border-silver/50 bg-dark-1/50"
+                  : "text-dark-silver hover:bg-dark-1/50"
+              } transition-colors duration-300`}
             >
               {category}
             </button>
@@ -70,20 +79,38 @@ export default function CommandBrowser() {
         </div>
         <div className="space-y-4">
           {filteredCommands.length > 0 ? (
-            filteredCommands.map((cmd) => (
-              <div
-                key={`${cmd.category}-${cmd.name}`}
-                className="flex w-full items-start gap-4 bg-gray-900/50 px-4 py-3 rounded-lg border border-gray-800/50 hover:border-gray-600 transition-colors duration-200"
-              >
-                <span className="flex-shrink-0 text-gray-400">{cmd.name}</span>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-white">{cmd.description}</p>
-                  <span className="text-xs text-gray-500">{cmd.category}</span>
+            filteredCommands.map((name) => {
+              const cmd = COMMAND_SYNTAX[name as keyof typeof COMMAND_SYNTAX];
+              // Determine category based on command name
+              let category = "Other";
+              if ["ban", "kick", "timeout", "warn", "purge", "nuke", "voicemaster", "serverinfo", "channelinfo", "userinfo", "snipe", "editsnipe", "afk", "jail", "unjail", "strip", "restore", "hardban", "tempban", "softban", "fakeperms", "autoresponder", "role", "prefix"].includes(name)) {
+                category = "Admin";
+              } else if ["8ball", "joke", "meme"].includes(name)) {
+                category = "Fun";
+              } else if ["play", "playnext", "queue", "volume", "autoplay", "stop", "pause", "resume"].includes(name)) {
+                category = "Music";
+              } else if ["prefix"].includes(name)) {
+                category = "Config";
+              }
+
+              return (
+                <div
+                  key={name}
+                  className="relative flex w-full items-start gap-4 bg-dark-2 border border-dark-3 rounded-none hover:border-silver/50 transition-all duration-300"
+                >
+                  <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
+                  <div className="relative z-10 flex flex-col items-start gap-2 text-left w-full">
+                    <span className="flex-shrink-0 font-mono text-silver">{`;${name}`}</span>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium text-white">{cmd.desc}</p>
+                      <span className="text-xs text-dark-silver">{category}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <p className="text-center text-gray-400 py-8">No commands found.</p>
+            <p className="text-center text-dark-silver py-8">No commands found.</p>
           )}
         </div>
       </div>

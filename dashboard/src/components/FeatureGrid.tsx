@@ -5,6 +5,7 @@ import {
   Bot,
   Command
 } from "lucide-react";
+import { BladeSlash } from "@/components/BladeSlash";
 
 export default function FeatureGrid() {
   const features = [
@@ -45,12 +46,13 @@ export default function FeatureGrid() {
           {features.map((feature) => (
             <div
               key={feature.name}
-              className="relative flex h-[180px] w-full items-center justify-center px-4 py-6 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 hover:border-gray-600 transition-all duration-300"
+              className="relative flex h-[180px] w-full items-center justify-center px-4 py-6 bg-dark-2 border border-dark-3 hover:border-silver/50 transition-all duration-300"
             >
-              <div className="flex flex-col items-center gap-4 text-center">
-                <feature.icon className="h-8 w-8 text-gray-300 transition-colors duration-300" />
+              <BladeSlash className="absolute inset-0 pointer-events-none" duration={0.6} trigger="hover" />
+              <div className="relative z-10 flex flex-col items-center gap-4 text-center">
+                <feature.icon className="h-8 w-8 text-silver transition-colors duration-300" />
                 <h3 className="text-lg font-semibold text-white">{feature.name}</h3>
-                <p className="text-sm text-gray-400">{feature.description}</p>
+                <p className="text-sm text-dark-silver">{feature.description}</p>
               </div>
             </div>
           ))}
