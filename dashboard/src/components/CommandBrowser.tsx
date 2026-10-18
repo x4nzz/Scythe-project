@@ -104,7 +104,7 @@ export default function CommandBrowser() {
                   <div className="relative z-10 flex flex-col items-start gap-2 text-left w-full">
                     <span className="flex-shrink-0 font-mono text-silver">{`;${name}`}</span>
                     <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium text-white">{cmd.desc}</p>
+                      <p className="text-sm font-medium text-white">{cmd?.desc || "No description available"}</p>
                       <span className="text-xs text-dark-silver">{category}</span>
                     </div>
                   </div>

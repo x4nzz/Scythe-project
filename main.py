@@ -1264,6 +1264,8 @@ class ScythBot(commands.Bot):
         init_db()
         self.command_prefix = server_prefix
         self.add_view(VoiceMasterInterface())
+        # Register persistent verification view
+        self.add_view(VerifyView(None, None))
         check_scheduled_nukes.start()
 
         # Start dashboard - DISABLED for bot-hosting.net (dashboard hosted externally on Vercel)
@@ -3584,13 +3586,13 @@ class VerifyView(View):
         self.verified_role_id = verified_role_id
         self.unverified_role_id = unverified_role_id
 
-    @discord.ui.button(label="Verify", style=discord.ButtonStyle.green, emoji="✅")
+    @discord.ui.button(label="Verify", style=discord.ButtonStyle.grey, emoji="✅", custom_id="scythe:verify_button")
     async def verify_button(self, interaction: discord.Interaction, button: Button):
         guild = interaction.guild
         member = interaction.user
 
         if not guild or not member:
-            await interaction.response.send_message("An error occurred.", ephemeral=True)
+            await interaction.response.send_message("Verification failed. Please try again.", ephemeral=True)
             return
 
         # Get stored roles
@@ -3600,7 +3602,7 @@ class VerifyView(View):
             row = cursor.fetchone()
 
         if not row:
-            await interaction.response.send_message("Verification not set up. Please contact an administrator.", ephemeral=True)
+            await interaction.response.send_message("Verification system not configured. Please contact an administrator.", ephemeral=True)
             return
 
         verified_role_id, unverified_role_id = row
@@ -3608,7 +3610,7 @@ class VerifyView(View):
         unverified_role = guild.get_role(unverified_role_id) if unverified_role_id else None
 
         if not verified_role:
-            await interaction.response.send_message("Verified role not configured. Please contact an administrator.", ephemeral=True)
+            await interaction.response.send_message("Verified role not set up. Please contact an administrator.", ephemeral=True)
             return
 
         try:
@@ -3622,11 +3624,11 @@ class VerifyView(View):
                 except discord.Forbidden:
                     pass  # Ignore if we can't remove the unverified role
 
-            await interaction.response.send_message(f"{EMOJI_CHECKMARK} You have been verified!", ephemeral=True)
+            await interaction.response.send_message("You have been successfully verified!", ephemeral=True)
         except discord.Forbidden:
-            await interaction.response.send_message("I lack permissions to assign roles.", ephemeral=True)
+            await interaction.response.send_message("I don't have permission to assign roles.", ephemeral=True)
         except discord.HTTPException:
-            await interaction.response.send_message("An error occurred while verifying you.", ephemeral=True)
+            await interaction.response.send_message("Verification failed. Please try again later.", ephemeral=True)
 
 
 # ==========================================
@@ -3640,34 +3642,59 @@ async def verify(ctx: commands.Context):
 
 @verify.command(name="setup")
 @commands.has_permissions(manage_roles=True)
-async def verify_setup(ctx: commands.Context):
-    """Set up the verification system in the current channel."""
-    # Get stored roles
+async def verify_setup(ctx: commands.Context, channel: Optional[discord.TextChannel] = None, role: Optional[discord.Role] = None):
+    """Set up the verification system in a specific channel with a specific verified role."""
+    # Use provided channel or current channel
+    target_channel = channel or ctx.channel
+
+    # If role is provided, update the stored verified role
+    verified_role_id = None
+    unverified_role_id = None
+
+    if role:
+        # Store the verified role
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT OR REPLACE INTO verification (guild_id, verified_role_id, unverified_role_id)
+                VALUES (?, ?, COALESCE((SELECT unverified_role_id FROM verification WHERE guild_id = ?), NULL))
+            """, (ctx.guild.id, role.id, ctx.guild.id))
+            conn.commit()
+        verified_role_id = role.id
+
+    # Get stored roles (updated if role was provided)
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT verified_role_id, unverified_role_id FROM verification WHERE guild_id = ?", (ctx.guild.id,))
         row = cursor.fetchone()
 
-    verified_role_id = row[0] if row else None
-    unverified_role_id = row[1] if row else None
+    if row:
+        verified_role_id = row[0] if row[0] is not None else verified_role_id
+        unverified_role_id = row[1] if row[1] is not None else unverified_role_id
 
     verified_role = ctx.guild.get_role(verified_role_id) if verified_role_id else None
-    unverified_role = ctx.guild.get_role(unverified_role_id) if unverified_role_id else None
+    # Note: We don't fetch unverified_role for the embed description to keep it clean
 
-    # Create embed
+    # Create Security-Bot style embed
     embed = discord.Embed(
-        title="Verification",
-        description=(
-            "Click the button below to verify yourself and gain access to the server.\n\n"
-            f"Verified Role: {verified_role.mention if verified_role else 'Not set'}\n"
-            f"Unverified Role: {unverified_role.mention if unverified_role else 'Not set'}"
-        ),
-        color=0x2b2d31  # EMBED_COLOR
+        description="This server requires you to verify yourself to get access to other channels, you can simply verify by clicking on the verify button.",
+        color=0x2b2d31  # EMBED_COLOR - dark theme
     )
+    embed.set_author(name="Verification Required", icon_url=ctx.guild.icon.url if ctx.guild.icon else None)
 
     # Create view with button
     view = VerifyView(verified_role_id, unverified_role_id)
-    await ctx.send(embed=embed, view=view)
+    await target_channel.send(embed=embed, view=view)
+
+    # Confirm to the user where the verification was set up
+    if channel and role:
+        await ctx.send(f"{EMOJI_CHECKMARK} Verification system set up in {channel.mention} with verified role {role.mention}!", ephemeral=True)
+    elif channel:
+        await ctx.send(f"{EMOJI_CHECKMARK} Verification system set up in {channel.mention}!", ephemeral=True)
+    elif role:
+        await ctx.send(f"{EMOJI_CHECKMARK} Verified role updated to {role.mention}!", ephemeral=True)
+    else:
+        await ctx.send(f"{EMOJI_CHECKMARK} Verification system refreshed in current channel!", ephemeral=True)
 
 @verify.command(name="role")
 @commands.has_permissions(manage_roles=True)
